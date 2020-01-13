@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginLeft="15dp">
+        <TextView
+            android:id="@+id/tvLocaleText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="工程坐标："
+            android:textColor="#000000"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        <EditText
+            android:id="@+id/et_prjInfo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:enabled="false"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginLeft="15dp">
+        <TextView
+            android:id="@+id/txSelectGridPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="18sp"
+            android:text="选择底图目录"
+            android:textColor="#6495ED"
+            android:layout_marginRight="20dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/ll_leftpannel"
+        android:background="#fafafa"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp">
+            <LinearLayout
+                android:gravity="center"
+                android:layout_width="50dp"
+                android:layout_height="fill_parent">
+                <CheckBox
+                    android:id="@+id/cbselectgridall"
+                    android:checked="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="名称"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="存储目录"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+        </LinearLayout>
+        <ListView
+            android:id="@+id/listViewGridMap"
+            android:layout_width="fill_parent"
+            android:cacheColorHint="#00000000"
+            android:dividerHeight="0.5dp"
+            android:divider="#7357ea"
+            android:layout_height="170dp">
+        </ListView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dip"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginBottom="20dip"
+            >
+
+            <TextView
+                android:id="@+id/text_gridsave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="24sp"
+                android:text="保存"
+                android:textColor="#6495ED"
+                android:layout_marginRight="20dp"/>
+
+            <TextView
+                android:id="@+id/text_gridcancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@+id/text_gridsave"
+                android:textSize="24sp"
+                android:textColor="#6495ED"
+                android:text="取消"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

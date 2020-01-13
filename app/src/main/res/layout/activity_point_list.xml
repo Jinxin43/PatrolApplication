@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.dingtu2.myapplication.PointListActivity">
+    <View
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#7f000000"/>
+    <ListView
+        android:id="@+id/listViewPoints"
+        android:layout_width="fill_parent"
+        android:cacheColorHint="#00000000"
+        android:dividerHeight="2dp"
+        android:divider="#7f000000"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        >
+    </ListView>
+</android.support.constraint.ConstraintLayout>

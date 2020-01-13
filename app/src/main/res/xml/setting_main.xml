@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceScreen
+        android:title="" >
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:defaultValue="true"
+        android:icon="@mipmap/icon_gengxin2"
+        android:key="check_update"
+        android:title="检查是否有新版本" />
+    <PreferenceScreen
+        android:icon="@mipmap/icon_sicanshu"
+        android:title="坐标参数" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.dingtu2.myapplication"
+            android:targetClass="com.example.dingtu2.myapplication.ParameterSettingActivity"/>
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@mipmap/mainmenu_map"
+        android:title="地图管理" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.dingtu2.myapplication"
+            android:targetClass="com.example.dingtu2.myapplication.MapSettingActivity"/>
+    </PreferenceScreen>
+    <!--EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="******"
+        android:inputType="textPassword"
+        android:key="password_text"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:icon="@mipmap/icon_changepassword"
+        android:title="修改密码" /-->
+    <!--<PreferenceScreen-->
+        <!--android:icon="@mipmap/icon_changepassword"-->
+        <!--android:title="修改密码" />-->
+    <!--<PreferenceScreen-->
+        <!--android:icon="@mipmap/icon_caiyang"-->
+        <!--android:title="定位采集间隔设置" />-->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:icon="@mipmap/icon_gengxin2"
+        android:key="gps_center"
+        android:title="地图随GPS位置移动" />
+</PreferenceScreen>

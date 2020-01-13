@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:background="#4a8b28"
+    android:orientation="vertical">
+
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#28573a"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/headerpic" />
+
+        <TextView
+            android:id="@+id/headerbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:text="标题"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_toolbar"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+        <Button android:id="@+id/formtemp_quit"
+            android:text="返回"
+            android:tag="退出"
+            android:drawableLeft="@drawable/icon_title_back"
+            android:background="#4a8b28"
+            android:textColor="#ffffff"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <Button android:id="@+id/formtemp_1"
+            android:text=""
+            android:textColor="#ffffff"
+            android:tag="属性1"
+            android:visibility="invisible"
+            android:layout_toLeftOf="@+id/formtemp_2"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="#4a8b28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/formtemp_2"
+            android:tag="保存"
+            android:text=""
+            android:textColor="#ffffff"
+            android:visibility="invisible"
+            android:layout_toLeftOf="@+id/formtemp_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="#4a8b28" />
+        <Button
+            android:id="@+id/formtemp_3"
+            android:tag="保存"
+            android:text=""
+            android:textColor="#ffffff"
+            android:visibility="invisible"
+            android:layout_toLeftOf="@+id/formtemp_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="#4a8b28" />
+        <Button
+            android:id="@+id/formtemp_4"
+            android:tag="保存"
+            android:text=""
+            android:textColor="#ffffff"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="#4a8b28" />
+
+    </RelativeLayout>
+
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:background="#f1f1f1"
+        android:id="@+id/databindalertdialoglayout">
+    </LinearLayout>
+</LinearLayout>
+

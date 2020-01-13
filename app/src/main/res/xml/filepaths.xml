@@ -1,0 +1,4 @@
+<paths>
+    <external-path path="." name="camera_photos" />
+    <external-path path="download" name="apkdownload" />
+</paths>

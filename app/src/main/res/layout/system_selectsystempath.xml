@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:background="#f1f1f1"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/tvSystemName"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="请选择系统工作目录位置"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+
+            android:background="@drawable/v1_bk_table_header"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tvLocaleText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="存储器信息"
+        android:textColor="#000000"
+        android:background="@drawable/v1_bk_head_splitbar" />
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cacheColorHint="#00000000"
+        android:dividerHeight="1dp"
+        android:divider="#7357ea">
+    </ListView>
+
+    <RelativeLayout
+        android:layout_gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btquit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/v1_space_height"
+            android:background="@drawable/buttonstyle"
+            android:tag="退出系统"
+            android:text="退出系统"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <LinearLayout
+            android:layout_alignBottom="@+id/btquit"
+            android:layout_alignTop="@+id/btquit"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/m_quit" />
+
+            <TextView
+                android:id="@+id/tv_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="退出系统"
+                android:textColor="#000000"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
+
