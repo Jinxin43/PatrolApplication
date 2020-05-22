@@ -68,5 +68,8 @@ public interface HttpInterface {
     Call<ResponseBody> GetRouteLine(@Path("action") String action, @Body GetRoutelineBean roundBean);
 
     @POST("/api/DTTracks/{action}")
+    Call<ResponseBody> GetRouteManagerLine(@Path("action") String action, @Body GetRoutelineBean roundBean);
+
+    @POST("/api/DTTracks/{action}")
     Call<ResponseBody> GetPointLine(@Path("action") String action, @Body RequestId requestId);
 }

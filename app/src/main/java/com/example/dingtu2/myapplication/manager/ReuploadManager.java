@@ -134,11 +134,11 @@ public class ReuploadManager {
                         Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传一个巡护发现", Toast.LENGTH_LONG).show();
 
                         } else {
-                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护发现失败"+result, Toast.LENGTH_LONG).show();
+                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护发现失败", Toast.LENGTH_LONG).show();
                             Log.e("Event upload failed", " result: " + result);
                         }
                     } catch (Exception io) {
-                   Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护发现失败"+io.getMessage(), Toast.LENGTH_LONG).show();
+                   Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护发现失败", Toast.LENGTH_LONG).show();
                         Log.e("Event upload failed", " exception: " + io.getMessage());
                     }
                 }
@@ -146,12 +146,12 @@ public class ReuploadManager {
                 @Override
                 public void onFailure(Call<ResponseBody> reg, Throwable t) {
                     Log.e("finish Round upload", " exception: " + t.getMessage());
-                Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护发现失败"+t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护发现失败", Toast.LENGTH_LONG).show();
                 }
             });
         }catch (Exception e)
         {
-            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护失败："+e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护失败：", Toast.LENGTH_LONG).show();
         }
 
 
@@ -236,18 +236,17 @@ public class ReuploadManager {
                                     Toast.makeText(AppSetting.applicaton.getApplicationContext(), "更新巡护照片失败："+ex.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(AppSetting.applicaton.getApplicationContext(), response.body().toString(), Toast.LENGTH_LONG).show();
                                 Log.e("上传巡护照片", response.body().string());
                             }
 
                         } catch (Exception ex) {
-                            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护照片："+ex.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护照片：", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护照片失败：" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传巡护照片失败：" , Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -288,20 +287,20 @@ public class ReuploadManager {
                                     PhotoManager.getInstance().savePhoto(photoEntity);
                                 }
                                 catch (Exception ex){
-                                    Toast.makeText(AppSetting.applicaton.getApplicationContext(), "更新发现照片失败："+ex.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AppSetting.applicaton.getApplicationContext(), "更新发现照片失败：", Toast.LENGTH_SHORT).show();
                                 }
                                 Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传了一张发现照片", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传发现照片失败：" + result.get("msg"), Toast.LENGTH_LONG).show();
+                                Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传发现照片失败：" , Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception ex) {
-                            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传发现照片失败"+ex.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传发现照片失败", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传发现照片失败：" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传发现照片失败：" , Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -311,7 +310,7 @@ public class ReuploadManager {
             if(hasNext){
                 uploadPhotoOneByOne(photoIndex+1);
             }
-            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传照片失败：" + ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(AppSetting.applicaton.getApplicationContext(), "补传照片失败：", Toast.LENGTH_LONG).show();
         }
 
     }

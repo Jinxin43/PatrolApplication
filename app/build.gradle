@@ -2,101 +2,83 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
     signingConfigs {
         config {
-            keyAlias 'key'
-            keyPassword 'android'
-            storeFile file('D:/key/sign.keystore')
+            keyAlias 'key0'
+            keyPassword 'Dingtu@029'
+            storeFile file('D:/key/signZhouBao.keystore')
             storePassword 'Dingtu@029'
         }
+    }
+
+
+    defaultConfig {
+        applicationId "com.example.dingtu2.myapplication"
+        minSdkVersion 18
+        targetSdkVersion 28
+        versionCode 7
+        versionName "1.01"
+        ndk {
+            abiFilters 'armeabi'
+        }
+        //ÃÌº”¡ÀjavaCompileOptions
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles 'proguard.cfg'
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
+        }
+
     }
 
     sourceSets.main {
         jniLibs.srcDirs = ['libs']  // <-- Set your folder here!
     }
 
-    defaultConfig {
-        applicationId "com.example.dingtu2.myapplication"
-        minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 7
-        versionName "1.01"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString()]
-            }
-        }
-        vectorDrawables.useSupportLibrary = true
-    }
-    buildTypes {
-
-        release {
-            minifyEnabled false
-            signingConfig signingConfigs.config
-            proguardFiles 'proguard.cfg'
-        }
-
-        debug {
-            signingConfig signingConfigs.config
-        }
-    }
-
-    defaultConfig {
-        applicationId "com.example.dingtu2.myapplication"
-        minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 7
-        versionName "1.01"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString()]
-            }
-        }
-        vectorDrawables.useSupportLibrary = true
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    defaultConfig {
-        vectorDrawables.useSupportLibrary = true
-    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
+
+    useLibrary 'org.apache.http.legacy'
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:25.3.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile project(':mapcontainer')
     //For Lifecycles, LiveData, and ViewModel, add:
-    compile 'android.arch.lifecycle:runtime:1.0.0-alpha4'
-    compile 'android.arch.lifecycle:extensions:1.0.0-alpha4'
+    implementation 'android.arch.lifecycle:runtime:1.0.0-alpha4'
+//    implementation 'android.arch.lifecycle:extensions:1.0.0-alpha4'
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha4"
     //For Room, add:
-    compile 'android.arch.persistence.room:runtime:1.0.0-alpha4'
-    compile 'net.anumbrella:customedittext:1.0.0'
-    compile 'com.android.support:exifinterface:25.1.0'
+    implementation 'android.arch.persistence.room:runtime:1.0.0-alpha4'
+    implementation 'net.anumbrella:customedittext:1.0.0'
+    implementation 'com.android.support:exifinterface:25.1.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha4"
     implementation 'com.android.support:support-v4:25.1.0'
     implementation 'com.android.support:support-vector-drawable:25.1.0'
@@ -112,4 +94,6 @@ dependencies {
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile project(path: ':xutils')
     implementation 'com.android.support:recyclerview-v7:25.3.1'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation "commons-logging:commons-logging:1.2"
 }

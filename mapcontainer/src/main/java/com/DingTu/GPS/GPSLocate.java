@@ -11,6 +11,8 @@ import android.location.GpsStatus.NmeaListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.OnNmeaMessageListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -152,9 +154,14 @@ public class GPSLocate {
         if (this.m_LocationEx!=null)this.m_GPSMap.UpdateGPSStatus(this.m_LocationEx);
 
         this.m_LTManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000,0,this.m_LocateListener);
-
-        //NEMA解析器
-        this.m_LTManager.addNmeaListener(this.m_NemaListener);
+        //android 5.1.1有问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //NEMA解析器
+            this.m_LTManager.addNmeaListener(this.m_NemaMessageListener);
+        } else {
+            //NEMA解析器
+            this.m_LTManager.addNmeaListener(this.m_NemaListener);
+        }
 
         //GPS状态侦听器
         this.m_LTManager.addGpsStatusListener(this.m_GpsStatusListener);
@@ -162,6 +169,13 @@ public class GPSLocate {
         GPS_OpenClose = true;this.m_GPSMap.UpdateGPSStatus(null);
         return true;
     }
+
+    private OnNmeaMessageListener m_NemaMessageListener = new OnNmeaMessageListener() {
+        @Override
+        public void onNmeaMessage(String arg1, long arg0) {
+            m_NEMALocate.onNmeaReceived(arg0, arg1);
+        }
+    };
 
     //NEMA解析器
     private NmeaListener m_NemaListener = new NmeaListener(){
@@ -181,31 +195,34 @@ public class GPSLocate {
             {
                 if (location.hasAccuracy() && location.hasAltitude())
                 {
-                    m_LocationEx.SetType(lkGpsLocationType.enInGps);
-                    m_LocationEx.SetInGpsLocate(location);
-                    m_LocationEx.SetGpsLongitude(location.getLongitude());
-                    m_LocationEx.SetGpsLatitude(location.getLatitude());
-                    m_LocationEx.SetGpsAltitude(location.getAltitude());
-                    m_LocationEx.SetGpsSpeed(location.getSpeed());
+                    if(location.getLongitude()>0&&location.getLatitude()>0){
+                        m_LocationEx.SetType(lkGpsLocationType.enInGps);
+                        m_LocationEx.SetInGpsLocate(location);
+                        m_LocationEx.SetGpsLongitude(location.getLongitude());
+                        m_LocationEx.SetGpsLatitude(location.getLatitude());
+                        m_LocationEx.SetGpsAltitude(location.getAltitude());
+                        m_LocationEx.SetGpsSpeed(location.getSpeed());
 //                    m_LocationEx.SetGpsTime(location.getTime());
-                    m_GPSMap.UpdateGPSStatus(m_LocationEx);
-                    Log.d("onLocationChanged", "m_GPSMap已更新");
-                    try
-                    {
-                        //TODO:记录到数据库
+                        m_GPSMap.UpdateGPSStatus(m_LocationEx);
+                        Log.d("onLocationChanged", "m_GPSMap已更新");
+                        try
+                        {
+                            //TODO:记录到数据库
 //                        记录到数据库LogDB logDB = new LogDB();
 //                        logDB.logDBGps(m_LocationEx.GetGpsDate().substring(0,4),m_LocationEx.GetGpsDate().replace("-", ""), m_LocationEx);
-                        Log.d("onLocationChanged", "gps记录被写进数据库");
+                            Log.d("onLocationChanged", "gps记录被写进数据库");
 
-                        if(mGpsCallback != null)
-                        {
-                            mGpsCallback.OnClick("",location);
+                            if(mGpsCallback != null)
+                            {
+                                mGpsCallback.OnClick("",location);
+                            }
                         }
+                        catch (Exception e) {
+                            Tools.ShowMessageBox(e.getMessage());
+                        }
+                        if (m_GPSPositionCallback !=null) m_GPSPositionCallback.OnClick("", null);
                     }
-                    catch (Exception e) {
-                        Tools.ShowMessageBox(e.getMessage());
-                    }
-                    if (m_GPSPositionCallback !=null) m_GPSPositionCallback.OnClick("", null);
+
                 }
             }
 
@@ -279,11 +296,14 @@ public class GPSLocate {
     //关闭GPS
     public boolean CloseGPS()
     {
-        this.m_LTManager.removeUpdates(this.m_LocateListener);
-        this.m_LTManager.removeGpsStatusListener(this.m_GpsStatusListener);
-        this.m_LTManager.removeNmeaListener(this.m_NemaListener);
-        this.GPS_OpenClose = false;this.m_GPSMap.UpdateGPSStatus(null);
-        this.m_LTManager = null;
+        if(this.m_LTManager!=null) {
+            this.m_LTManager.removeUpdates(this.m_LocateListener);
+            this.m_LTManager.removeGpsStatusListener(this.m_GpsStatusListener);
+            this.m_LTManager.removeNmeaListener(this.m_NemaListener);
+            this.GPS_OpenClose = false;
+            this.m_GPSMap.UpdateGPSStatus(null);
+            this.m_LTManager = null;
+        }
         return true;
     }
 

@@ -1003,7 +1003,6 @@ public static String ListToJSONStr(List<String> StrList)
                 Coordinate Coor1 = StaticObject.soProjectSystem.XYToWGS84(x1, y1, 0);
                 Coordinate Coor2 = StaticObject.soProjectSystem.XYToWGS84(x2, y2, 0);
                 StaticObject.soProjectSystem.GetCoorSystem().SetCenterMeridian(ProjectSystem.AutoCalCenterJX(Coor1.getX(),Coor1.getY()));
-
                 Coor1 = Project_GK.GK_BLToXY(Coor1.getX(), Coor1.getY(), StaticObject.soProjectSystem.GetCoorSystem());
                 Coor2 = Project_GK.GK_BLToXY(Coor2.getX(), Coor2.getY(), StaticObject.soProjectSystem.GetCoorSystem());
                 if(Coor1== null)

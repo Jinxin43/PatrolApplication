@@ -88,9 +88,9 @@ public class UpdateManager {
                         showNoticeDialog();
                         break;
                     case 0:
-                        Toast.makeText(mContext, R.string.soft_update_no, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(mContext, R.string.soft_update_no, Toast.LENGTH_LONG).show();
                     case 3:
-                        Toast.makeText(mContext, "无法获取版本", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(mContext, "无法获取版本", Toast.LENGTH_LONG).show();
                     default:
                         break;
 

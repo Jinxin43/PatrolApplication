@@ -6,11 +6,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
@@ -19,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.DingTu.Base.ICallback;
 import com.DingTu.Base.PubVar;
@@ -27,8 +31,10 @@ import com.DingTu.CoordinateSystem.CoorSystem;
 import com.DingTu.Enum.lkMapFileType;
 import com.example.dingtu2.myapplication.controls.SelectDictionary;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,6 +52,9 @@ public class MapSettingActivity extends AppCompatActivity {
     Dialog startRoundDialog;
     private List<HashMap<String, Object>> m_GridMapFileList = null;
     private List<HashMap<String, Object>> m_VetorMapFileList = null;
+    private String mSelectCoor;
+    private String mSelectCenter;
+    private EditText gridFileNames, vertorFileNames;
     private ICallback m_Callback;
     //上部按钮事件
     private ICallback pCallback = new ICallback() {
@@ -74,6 +83,7 @@ public class MapSettingActivity extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,12 +100,27 @@ public class MapSettingActivity extends AppCompatActivity {
         int index = -1;
         for (String coordType : arrCoordinaType) {
             index++;
-            if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetName().equals(coordType)) {
-                break;
+            if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem() != null) {
+                if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetName().equals(coordType)) {
+                    break;
+                }
             }
         }
 
         spCoordinateType.setSelection(index);
+        spCoordinateType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                initBKFileLists(lkMapFileType.enGrid);
+                initBKFileLists(lkMapFileType.enVector);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         String[] arrCentralType = "105、108、111".split("、");
         ArrayAdapter<String> centralMedialAdapter = new ArrayAdapter<String>(PubVar.m_DoEvent.m_Context,
@@ -112,6 +137,18 @@ public class MapSettingActivity extends AppCompatActivity {
             }
         }
         spCentralMeridian.setSelection(centralIndex);
+        spCentralMeridian.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                initBKFileLists(lkMapFileType.enGrid);
+                initBKFileLists(lkMapFileType.enVector);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         initBKFileLists(lkMapFileType.enGrid);
         initBKFileLists(lkMapFileType.enVector);
@@ -119,6 +156,7 @@ public class MapSettingActivity extends AppCompatActivity {
     }
 
     private void setupActionBar() {
+        Toolbar t = (Toolbar) findViewById(R.id.toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("地图管理");
         if (actionBar != null) {
@@ -139,31 +177,50 @@ public class MapSettingActivity extends AppCompatActivity {
 
     private void initBKFileLists(lkMapFileType kind) {
         if (kind == lkMapFileType.enGrid) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
             this.m_GridMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetGridLayerExplorer().GetBKFileList();
-            String gridFileNames = "";
-            for (HashMap<String, Object> hashMap : m_GridMapFileList) {
-                String name = hashMap.get("BKMapFile") + ";";
-                gridFileNames += name;
-            }
+            if (this.m_GridMapFileList != null && this.m_GridMapFileList.size() > 0) {
+                String gridFileNames = "";
+                for (HashMap<String, Object> hashMap : m_GridMapFileList) {
+                    String coor = hashMap.get("CoorSystem").toString();
+                    if (coor.contains(mSelectCoor) && coor.contains(mSelectCoor)) {
+                        String name = hashMap.get("BKMapFile") + ";";
+                        gridFileNames += name;
+                        if (gridFileNames.endsWith(";")) {
+                            gridFileNames = gridFileNames.substring(0, gridFileNames.length() - 1);
+                        }
 
-            if (gridFileNames.endsWith(";")) {
-                gridFileNames = gridFileNames.substring(0, gridFileNames.length() - 1);
+                        ((EditText) this.findViewById(R.id.etGridMap)).setText(gridFileNames);
+
+                    }else{
+                        ((EditText) this.findViewById(R.id.etGridMap)).setText("");
+                    }
+                }
+
             }
-            ((EditText) this.findViewById(R.id.etGridMap)).setText(gridFileNames);
         }
         if (kind == lkMapFileType.enVector) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
             this.m_VetorMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetVectorLayerExplorer().GetBKFileList();
-            String gridFileNames = "";
-            for (HashMap<String, Object> hashMap : m_VetorMapFileList) {
-                String name = hashMap.get("BKMapFile") + ";";
-                gridFileNames += name;
+            if (this.m_VetorMapFileList != null && this.m_VetorMapFileList.size() > 0) {
+                String gridFileNames = "";
+                for (HashMap<String, Object> hashMap : m_VetorMapFileList) {
+                    String coor = hashMap.get("CoorSystem").toString();
+                    if (coor.contains(mSelectCoor) && coor.contains(mSelectCenter)) {
+                        String name = hashMap.get("BKMapFile") + ";";
+                        gridFileNames += name;
+                    }
+                }
+                if (gridFileNames.endsWith(";")) {
+                    gridFileNames = gridFileNames.substring(0, gridFileNames.length() - 1);
+                }
+
+                ((EditText) this.findViewById(R.id.etVertorMap)).setText(gridFileNames);
             }
 
-            if (gridFileNames.endsWith(";")) {
-                gridFileNames = gridFileNames.substring(0, gridFileNames.length() - 1);
-            }
 
-            ((EditText) this.findViewById(R.id.etVertorMap)).setText(gridFileNames);
         }
     }
 
@@ -171,24 +228,84 @@ public class MapSettingActivity extends AppCompatActivity {
     public void clickBtn(View view) {
         switch (view.getId()) {
             case R.id.txSelectVertorMap:
-                selectVertorMap();
+                String mSelectCoor = spCoordinateType.getSelectedItem().toString();
+                float mSelectCenter= Float.parseFloat(spCentralMeridian.getSelectedItem().toString());
+                CoorSystem CS = PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem();
+                float center=PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetCenterMeridian();
+                if(CS.GetName().equals(mSelectCoor)&& mSelectCenter==center){
+                    selectVertorMap();
+                }else {
+                    Toast.makeText(getApplicationContext(),"所选坐标和当前工程坐标不一致，请先点击保存！",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.txSelectGridMap:
-                selectGridMap();
+                String mSelect= spCoordinateType.getSelectedItem().toString();
+                float mCenter=Float.parseFloat(spCentralMeridian.getSelectedItem().toString());
+                CoorSystem cs = PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem();
+                float centers=PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetCenterMeridian();
+                if(cs.GetName().equals(mSelect)&&mCenter==centers){
+                    selectGridMap();
+                }else{
+                    Toast.makeText(getApplicationContext(),"所选坐标和当前工程坐标不一致，请先点击保存！",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.txCancelMap:
                 finish();
                 break;
             case R.id.txSaveMap:
+                SaveGrid();
+                SaveVetor();
                 SaveMapSetting();
                 break;
 
         }
     }
 
+    private void SaveVetor() {
+        if (m_VetorMapFileList != null) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
+            List<HashMap<String, Object>> SelectMapFileList = new ArrayList<HashMap<String, Object>>();
+            String filePath = "";
+            for (HashMap<String, Object> mapFile : m_VetorMapFileList) {
+                String coor = mapFile.get("CoorSystem").toString();
+                if (coor.contains(mSelectCoor) && coor.contains(mSelectCenter)) {
+                    if (Boolean.parseBoolean(mapFile.get("Select") + "")) {
+                        filePath += mapFile.get("BKMapFile") + ";";
+                        SelectMapFileList.add(mapFile);
+                    }
+                }
+
+            }
+            if (!PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().SaveBKLayer("矢量", SelectMapFileList)) {
+                Tools.ShowMessageBox("矢量底图保存失败！");
+            }
+        }
+    }
+
+    private void SaveGrid() {
+        if (m_GridMapFileList != null) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
+            List<HashMap<String, Object>> SelectMapFileList = new ArrayList<HashMap<String, Object>>();
+            String filePath = "";
+            for (HashMap<String, Object> mapFile : m_GridMapFileList) {
+                String coor = mapFile.get("CoorSystem").toString();
+                if (coor.contains(mSelectCoor) && coor.contains(mSelectCenter)) {
+                    if (Boolean.parseBoolean(mapFile.get("Select") + "")) {
+                        filePath += mapFile.get("BKMapFile") + ";";
+                        SelectMapFileList.add(mapFile);
+                    }
+                }
+            }
+            if (!PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().SaveBKLayer("栅格", SelectMapFileList)) {
+                Tools.ShowMessageBox("栅格底图保存失败！");
+            }
+        }
+
+    }
+
     public void SaveMapSetting() {
-        Log.d("spCoordinateType", spCoordinateType.getSelectedItem() + "");
-        Log.d("spCentralMeridian", spCentralMeridian.getSelectedItem() + "");
         if (PubVar.m_DoEvent.m_ProjectDB.saveProjectInfo(spCoordinateType.getSelectedItem() + "", spCentralMeridian.getSelectedItem() + "")) {
             MainActivity.mMapSettingCallbak.OnClick("", null);
             finish();
@@ -200,7 +317,7 @@ public class MapSettingActivity extends AppCompatActivity {
         selectVertorDialog.setContentView(R.layout.dialog_selectgridmap);
         selectVertorDialog.setTitle("选择矢量底图");
 
-        final EditText gridFileNames = (EditText) this.findViewById(R.id.etVertorMap);
+        vertorFileNames = (EditText) this.findViewById(R.id.etVertorMap);
         selectVertorDialog.findViewById(R.id.text_gridcancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,24 +327,7 @@ public class MapSettingActivity extends AppCompatActivity {
         selectVertorDialog.findViewById(R.id.text_gridsave).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (m_VetorMapFileList != null) {
-                    List<HashMap<String, Object>> SelectMapFileList = new ArrayList<HashMap<String, Object>>();
-                    String filePath = "";
-                    for (HashMap<String, Object> mapFile : m_VetorMapFileList) {
-                        if (Boolean.parseBoolean(mapFile.get("Select") + "")) {
-                            filePath += mapFile.get("BKMapFile") + ";";
-                            SelectMapFileList.add(mapFile);
-                        }
-                    }
-                    if (!PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().SaveBKLayer("矢量", SelectMapFileList)) {
-                        Tools.ShowMessageBox("矢量底图保存失败！");
-                    } else {
-                        if (filePath.endsWith(";")) {
-                            filePath = filePath.substring(0, filePath.length() - 1);
-                        }
-                        gridFileNames.setText(filePath);
-                    }
-                }
+                selectSaveVetor();
                 selectVertorDialog.dismiss();
             }
         });
@@ -277,10 +377,51 @@ public class MapSettingActivity extends AppCompatActivity {
         }
         Tools.SetTextViewValueOnID(selectVertorDialog, R.id.et_prjInfo, CoorSystemInfo);
 
+
         this.m_VetorMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetVectorLayerExplorer().GetBKFileList();
 
-        BindMapFileListToView(this.m_VetorMapFileList, listViewGridMap);
+        if (m_VetorMapFileList != null && m_VetorMapFileList.size() > 0) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
+            for (HashMap<String, Object> hashMap : m_VetorMapFileList) {
+                String coor = hashMap.get("CoorSystem").toString();
+                if (coor.contains(mSelectCenter) && coor.contains(mSelectCoor)) {
+                    BindMapFileListToView(this.m_VetorMapFileList, listViewGridMap);
+                }
+            }
+        }
+
         selectVertorDialog.show();
+
+    }
+
+    private void selectSaveVetor() {
+        if (m_VetorMapFileList != null) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
+            List<HashMap<String, Object>> SelectMapFileList = new ArrayList<HashMap<String, Object>>();
+            String filePath = "";
+            for (HashMap<String, Object> mapFile : m_VetorMapFileList) {
+                String coor = mapFile.get("CoorSystem").toString();
+                if (coor.contains(mSelectCoor) && coor.contains(mSelectCenter)) {
+                    if (Boolean.parseBoolean(mapFile.get("Select") + "")) {
+                        filePath += mapFile.get("BKMapFile") + ";";
+                        SelectMapFileList.add(mapFile);
+                    }
+                }
+
+            }
+            if (!PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().SaveBKLayer("矢量", SelectMapFileList)) {
+                Tools.ShowMessageBox("矢量底图保存失败！");
+            } else {
+                if(filePath!=null&& !TextUtils.isEmpty(filePath)) {
+                    if (filePath.endsWith(";")) {
+                        filePath = filePath.substring(0, filePath.length() - 1);
+                    }
+                    vertorFileNames.setText(filePath);
+                }
+            }
+        }
 
     }
 
@@ -289,7 +430,7 @@ public class MapSettingActivity extends AppCompatActivity {
         startRoundDialog.setContentView(R.layout.dialog_selectgridmap);
         startRoundDialog.setTitle("选择栅格底图");
 
-        final EditText gridFileNames = (EditText) this.findViewById(R.id.etGridMap);
+        gridFileNames = (EditText) this.findViewById(R.id.etGridMap);
         startRoundDialog.findViewById(R.id.text_gridcancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -299,24 +440,7 @@ public class MapSettingActivity extends AppCompatActivity {
         startRoundDialog.findViewById(R.id.text_gridsave).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (m_GridMapFileList != null) {
-                    List<HashMap<String, Object>> SelectMapFileList = new ArrayList<HashMap<String, Object>>();
-                    String filePath = "";
-                    for (HashMap<String, Object> mapFile : m_GridMapFileList) {
-                        if (Boolean.parseBoolean(mapFile.get("Select") + "")) {
-                            filePath += mapFile.get("BKMapFile") + ";";
-                            SelectMapFileList.add(mapFile);
-                        }
-                    }
-                    if (!PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().SaveBKLayer("栅格", SelectMapFileList)) {
-                        Tools.ShowMessageBox("栅格底图保存失败！");
-                    } else {
-                        if (filePath.endsWith(";")) {
-                            filePath = filePath.substring(0, filePath.length() - 1);
-                        }
-                        gridFileNames.setText(filePath);
-                    }
-                }
+                selectSaveGrid();
                 startRoundDialog.dismiss();
             }
         });
@@ -368,8 +492,45 @@ public class MapSettingActivity extends AppCompatActivity {
 
         this.m_GridMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetGridLayerExplorer().GetBKFileList();
 
-        BindMapFileListToView(this.m_GridMapFileList, listViewGridMap);
+        if (m_GridMapFileList != null && m_GridMapFileList.size() > 0) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
+            for (HashMap<String, Object> hashMap : m_GridMapFileList) {
+                String coor = hashMap.get("CoorSystem").toString();
+                if (coor.contains(mSelectCenter) && coor.contains(mSelectCoor)) {
+                    BindMapFileListToView(this.m_GridMapFileList, listViewGridMap);
+                }
+            }
+        }
         startRoundDialog.show();
+    }
+
+    private void selectSaveGrid() {
+        if (m_GridMapFileList != null) {
+            mSelectCoor = spCoordinateType.getSelectedItem().toString();
+            mSelectCenter = spCentralMeridian.getSelectedItem().toString();
+            List<HashMap<String, Object>> SelectMapFileList = new ArrayList<HashMap<String, Object>>();
+            String filePath = "";
+            for (HashMap<String, Object> mapFile : m_GridMapFileList) {
+                String coor = mapFile.get("CoorSystem").toString();
+                if (coor.contains(mSelectCoor) && coor.contains(mSelectCenter)) {
+                    if (Boolean.parseBoolean(mapFile.get("Select") + "")) {
+                        filePath += mapFile.get("BKMapFile") + ";";
+                        SelectMapFileList.add(mapFile);
+                    }
+                }
+            }
+            if (!PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().SaveBKLayer("栅格", SelectMapFileList)) {
+                Tools.ShowMessageBox("栅格底图保存失败！");
+            } else {
+                if(filePath!=null&&!TextUtils.isEmpty(filePath)) {
+                    if (filePath.endsWith(";")) {
+                        filePath = filePath.substring(0, filePath.length() - 1);
+                    }
+                    gridFileNames.setText(filePath);
+                }
+            }
+        }
     }
 
     private void BindMapFileListToView(List<HashMap<String, Object>> mapFileList, ListView listViewGridMap) {

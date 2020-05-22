@@ -81,6 +81,16 @@ public class PatrolManager {
         XDbManager.getDb().saveOrUpdate(patrol);
     }
 
+    public List<PatrolEntity> getPatrol()  {
+        List<PatrolEntity>   patrol= null;
+        try {
+            patrol = XDbManager.getDb().findAll(PatrolEntity.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        return patrol;
+    }
+
 
     public boolean savePatrolEvent(PatrolEventEntity patrolEvent) {
         boolean result = true;

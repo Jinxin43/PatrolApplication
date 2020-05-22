@@ -48,6 +48,7 @@ import com.example.dingtu2.myapplication.manager.PhotoManager;
 import com.example.dingtu2.myapplication.manager.UploadMananger;
 import com.example.dingtu2.myapplication.utils.PhotoCamera;
 import com.example.dingtu2.myapplication.utils.PhotoShow;
+import com.example.dingtu2.myapplication.utils.SharedPreferencesUtils;
 
 import org.json.JSONObject;
 
@@ -162,23 +163,20 @@ public class RoundActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
-        if (PubVar.m_GPSLocate.m_LocationEx == null || PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() < 0.000001 || PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() < 0.000001) {
-            Tools.ShowYesNoMessage(this, "当前GPS信号弱，是否将巡护轨迹的最后一个点作为结束点保存？", new ICallback() {
-                @Override
-                public void OnClick(String Str, Object ExtraStr) {
-                    if (Str.equals("YES")) {
-                        lastTrace = AppSetting.curRound.getLastTrace();
-                    }
-                    else
-                    {
+        if (PubVar.m_GPSLocate == null || PubVar.m_GPSLocate.m_LocationEx == null || PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() < 0.000001 || PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() < 0.000001) {
+                Tools.ShowYesNoMessage(this, "当前GPS信号弱，是否将巡护轨迹的最后一个点作为结束点保存？", new ICallback() {
+                    @Override
+                    public void OnClick(String Str, Object ExtraStr) {
+                        if (Str.equals("YES")) {
+                            lastTrace = AppSetting.curRound.getLastTrace();
+                        } else {
+
+                        }
 
                     }
-
-                }
-            });
+                });
         } else {
             Coordinate coord = StaticObject.soProjectSystem.WGS84ToXY(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude(), PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude(), PubVar.m_GPSLocate.m_LocationEx.GetGpsAltitude());
 
@@ -209,6 +207,7 @@ public class RoundActivity extends AppCompatActivity {
             lastTrace.setSaveTime(new Date());
             lastTrace.setRoundID(AppSetting.curRound.getId());
         }
+
     }
 
     private void setupActionBar() {
@@ -223,6 +222,8 @@ public class RoundActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            SharedPreferencesUtils.putBoolean(this, "mIsRounding", true);
+            AppSetting.mIsRounding = true;
             finish();
             return true;
         }
@@ -252,12 +253,10 @@ public class RoundActivity extends AppCompatActivity {
                         tv_Result1.setText("结果");
                         tv_Result.setVisibility(View.VISIBLE);
                         roundLineText.setText("巡护线路");
-                    } else if(position == 2)
-                    {
+                    } else if (position == 2) {
                         tvPatrolContentName.setText("巡护内容");
                         roundLineText.setText("巡查区域");
-                    }
-                    else{
+                    } else {
                         tvPatrolContentName.setText("巡护发现");
                         viewPatrolContent.setVisibility(View.GONE);
                         viewEventNum.setVisibility(View.VISIBLE);
@@ -366,7 +365,7 @@ public class RoundActivity extends AppCompatActivity {
                     etEventNum.setText("0");
                 }
 
-                if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+                if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
                     try {
                         ((TextView) findViewById(R.id.tvLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                         ((TextView) findViewById(R.id.tvLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -429,7 +428,7 @@ public class RoundActivity extends AppCompatActivity {
                 PatrolManager.getInstance().savePatrol(AppSetting.curRound);
                 Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
-                Toast.makeText(this, "保存失败" + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "保存失败" , Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -444,9 +443,7 @@ public class RoundActivity extends AppCompatActivity {
         if (lastTrace != null) {
             saveEndPoint();
             saveAndUpload();
-        }
-        else
-        {
+        } else {
             Tools.ShowYesNoMessage(this, "当前巡护没有结束点，是否结束巡护？", new ICallback() {
                 @Override
                 public void OnClick(String Str, Object ExtraStr) {
@@ -464,15 +461,11 @@ public class RoundActivity extends AppCompatActivity {
         }
     }
 
-    private void saveAndUpload()
-    {
+    private void saveAndUpload() {
         getRoundValue();
-        if(AppSetting.curRound.getRoundType() ==23 )
-        {
-            if(roundLineName.getText()== null || roundLineName.getText().length()==0)
-            {
-                Tools.ShowMessageBox(RoundActivity.this,"责任区巡护必须填写责任区！",new ICallback()
-                {
+        if (AppSetting.curRound.getRoundType() == 23) {
+            if (roundLineName.getText() == null || roundLineName.getText().length() == 0) {
+                Tools.ShowMessageBox(RoundActivity.this, "责任区巡护必须填写责任区！", new ICallback() {
                     @Override
                     public void OnClick(String Str, Object ExtraStr) {
 
@@ -490,15 +483,14 @@ public class RoundActivity extends AppCompatActivity {
             Toast.makeText(RoundActivity.this, "巡护信息已保存", Toast.LENGTH_SHORT).show();
             closeActivity();
         } catch (Exception ex) {
-            Toast.makeText(RoundActivity.this, "保存失败" + ex.getMessage(), Toast.LENGTH_SHORT).show();
-            try{
+            Toast.makeText(RoundActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
+            try {
                 if (mSavingingDlg.isShowing()) {
                     mSavingingDlg.dismiss();
                 }
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("mSavingingDlg",e.getMessage());
+                Log.e("mSavingingDlg", e.getMessage());
             }
             return;
         }
@@ -512,10 +504,8 @@ public class RoundActivity extends AppCompatActivity {
                             uploadPhotos();
                         }
                         Toast.makeText(AppSetting.applicaton.getApplicationContext(), "巡护上传成功", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-
+                    } else {
+                        Toast.makeText(AppSetting.applicaton.getApplicationContext(), "巡护上传失败", Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -525,9 +515,9 @@ public class RoundActivity extends AppCompatActivity {
             });
 
         } catch (Exception ex) {
-            Toast.makeText(AppSetting.applicaton.getApplicationContext(),"上传："+ex.getMessage(),Toast.LENGTH_LONG).show();
         }
     }
+
     private boolean saveEndPoint() {
         try {
 
@@ -557,8 +547,6 @@ public class RoundActivity extends AppCompatActivity {
                 });
             }
         } catch (Exception ex) {
-            //TODO:save error log
-            Toast.makeText(this,"保存结束点："+ex.getMessage(),Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -589,23 +577,18 @@ public class RoundActivity extends AppCompatActivity {
         } else {
             AppSetting.curRound.setRoundType(1);
         }
-        if(mPhotoNameList.size()>0)
-        {
-            for (String photoName:mPhotoNameList)
-            {
-                PhotoEntity photoEntity= new PhotoEntity();
+        if (mPhotoNameList.size() > 0) {
+            for (String photoName : mPhotoNameList) {
+                PhotoEntity photoEntity = new PhotoEntity();
                 photoEntity.setBelongTo(AppSetting.curRound.getId());
                 photoEntity.setPhotoName(photoName);
                 photoEntity.setPhotoType("巡护");
                 photoEntity.setSaveTime(new Date());
                 photoEntity.setUserID(AppSetting.curUserKey);
-                try
-                {
+                try {
                     PhotoManager.getInstance().savePhoto(photoEntity);
-                }
-                catch (Exception ex)
-                {
-                    Toast.makeText(this,"保存照片信息："+ex.getMessage(),Toast.LENGTH_LONG).show();
+                } catch (Exception ex) {
+                    Toast.makeText(this, "保存照片信息失败！" , Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -681,8 +664,8 @@ public class RoundActivity extends AppCompatActivity {
 
 
             String pswz = "拍摄位置：未定位";
-            if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix&&
-                    PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude()>0.0001&&PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude()>0.0001  ) {
+            if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix &&
+                    PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0.0001 && PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0.0001) {
                 try {
                     String[] Coor = PubVar.m_GPSLocate.getJWGPSCoordinate().split(",");
                     String jd = Tools.GetDDMMSS(Tools.ConvertToDouble(Coor[0]));
@@ -695,9 +678,10 @@ public class RoundActivity extends AppCompatActivity {
                 }
 
             }
+
             canvasTemp.drawText(pswz, 8, h - 150, p);
 
-            canvasTemp.save(Canvas.ALL_SAVE_FLAG);
+            canvasTemp.save();
             canvasTemp.restore();
 
             FileOutputStream fos = new FileOutputStream(f1);
@@ -738,26 +722,27 @@ public class RoundActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    String[] Coor = PubVar.m_GPSLocate.getJWGPSCoordinate().split(",");
+                    if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null) {
+                        String[] Coor = PubVar.m_GPSLocate.getJWGPSCoordinate().split(",");
 
-                    ExifInterface exifInfo = new ExifInterface(fileName);
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, Tools.ConvertToSexagesimal(Coor[0]));
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE, Tools.ConvertToSexagesimal(Coor[1]));
-                    String[] GPSDateTime = PubVar.m_GPSLocate.getGPSDateForPhotoFormat();
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, GPSDateTime[1]);
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, GPSDateTime[0]);
+                        ExifInterface exifInfo = new ExifInterface(fileName);
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, Tools.ConvertToSexagesimal(Coor[0]));
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE, Tools.ConvertToSexagesimal(Coor[1]));
+                        String[] GPSDateTime = PubVar.m_GPSLocate.getGPSDateForPhotoFormat();
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, GPSDateTime[1]);
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, GPSDateTime[0]);
 
-                    if (PubVar.m_GPSLocate.m_LocationEx != null) {
                         exif.put("lat:", PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude());
                         exif.put("lon:", PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude());
                         exif.put("gpsTime", PubVar.m_GPSLocate.m_LocationEx.GetGpsDate() + " " + PubVar.m_GPSLocate.m_LocationEx.GetGpsTime());
-                    }
 
-                    Log.d("exif save", exif.toString());
-                    exifInfo.setAttribute(ExifInterface.TAG_USER_COMMENT, exif.toString());
-                    exifInfo.saveAttributes();
+
+                        Log.d("exif save", exif.toString());
+                        exifInfo.setAttribute(ExifInterface.TAG_USER_COMMENT, exif.toString());
+                        exifInfo.saveAttributes();
+                    }
                 } catch (Exception io) {
 
                 }
@@ -770,8 +755,7 @@ public class RoundActivity extends AppCompatActivity {
     private void uploadPhotos() {
         for (final String fileName : mPhotoNameList) {
             File photo = new File(AppSetting.photoPath + "/" + fileName);
-            if(photo == null)
-            {
+            if (photo == null) {
                 continue;
             }
             RequestBody userUid = RequestBody.create(MediaType.parse("text/plain"), AppSetting.curRound.getServerId());
@@ -787,9 +771,9 @@ public class RoundActivity extends AppCompatActivity {
                 imageInfo = exifInfo.getAttribute(ExifInterface.TAG_USER_COMMENT);
                 Log.d("exif read", imageInfo);
             } catch (Exception ex) {
-                Toast.makeText(RoundActivity.this, "照片位置信息读取失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RoundActivity.this, "照片信息读取失败", Toast.LENGTH_SHORT).show();
             }
-            if(imageInfo == null){
+            if (imageInfo == null) {
                 imageInfo = "";
             }
             RequestBody imageExif = RequestBody.create(MediaType.parse("text/plain"), imageInfo);
@@ -801,24 +785,21 @@ public class RoundActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     try {
-                        if(response == null|| response.body() == null)
-                        {
+                        if (response == null || response.body() == null) {
                             return;
                         }
                         JSONObject result = new JSONObject(response.body().string());
                         if (result.get("success").equals(Boolean.TRUE)) {
-                            try{
+                            try {
                                 PhotoEntity photoEntity = PhotoManager.getInstance().getPhotoEntity(fileName);
                                 photoEntity.setUploadStatus(1);
                                 photoEntity.setUploadTime(new Date());
                                 PhotoManager.getInstance().savePhoto(photoEntity);
-                            }
-                            catch (Exception ex){
-                                Toast.makeText(AppSetting.applicaton.getApplicationContext(), "更新照片失败："+ex.getMessage(), Toast.LENGTH_SHORT).show();
+                            } catch (Exception ex) {
+                                Toast.makeText(AppSetting.applicaton.getApplicationContext(), "保存照片信息失败！" , Toast.LENGTH_SHORT).show();
                             }
 
                         } else {
-                            Toast.makeText(RoundActivity.this, response.body().toString(), Toast.LENGTH_LONG).show();
                             Log.e("上传照片", response.body().string());
                         }
                     } catch (Exception ex) {
@@ -842,38 +823,41 @@ public class RoundActivity extends AppCompatActivity {
 
         List<String> delPhotos = new ArrayList<String>();
 
-        for (int i = 0; i < adapter.getCount(); i++) {
-            HashMap<String, Object> map = (HashMap<String, Object>) adapter.getItem(i);
-            View view = gridView.getChildAt(i);
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_select);
-            if (checkBox.isChecked()) {
-                String fileName = map.get("image") + "";
-                File file = new File(fileName);
-                if (file.exists()) {
-                    file.delete();
-                }
+        if (adapter != null && adapter.getCount() > 0) {
 
-                String bigFileName = fileName.replace("/samllPhoto", "");
-                File bigfile = new File(bigFileName);
-                if (bigfile.exists()) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                HashMap<String, Object> map = (HashMap<String, Object>) adapter.getItem(i);
+                View view = gridView.getChildAt(i);
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_select);
+                if (checkBox.isChecked()) {
+                    String fileName = map.get("image") + "";
+                    File file = new File(fileName);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+
+                    String bigFileName = fileName.replace("/samllPhoto", "");
+                    File bigfile = new File(bigFileName);
+                    if (bigfile.exists()) {
+                        bigfile.delete();
+                    }
                     bigfile.delete();
-                }
-                bigfile.delete();
 
 
-                for (String f : mPhotoNameList) {
-                    if (f.equals(map.get("text") + "")) {
-                        delPhotos.add(f);
+                    for (String f : mPhotoNameList) {
+                        if (f.equals(map.get("text") + "")) {
+                            delPhotos.add(f);
+                        }
                     }
                 }
             }
-        }
 
-        for (String f : delPhotos) {
-            mPhotoNameList.remove(f);
-        }
+            for (String f : delPhotos) {
+                mPhotoNameList.remove(f);
+            }
 
-        photoShowTool.showPhotos(this, mPhotoNameList, gridView);
+            photoShowTool.showPhotos(this, mPhotoNameList, gridView);
+        }
     }
 
     private void prompt(Call<ResponseBody> newRound) {

@@ -426,7 +426,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginRight="20dp"
                 android:background="@drawable/button_register"
-                android:textSize="24sp"
+                android:textSize="15sp"
                 android:textColor="#6495ED"
                 android:text="完成巡护"
                 />
@@ -438,7 +438,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_toRightOf="@+id/text_finish"
-                android:textSize="24sp"
+                android:textSize="15sp"
                 android:textColor="#6495ED"
                 android:text="保存信息"
                 android:background="@drawable/button_register"

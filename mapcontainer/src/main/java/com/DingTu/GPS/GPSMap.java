@@ -1,6 +1,5 @@
 package com.DingTu.GPS;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,7 +9,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
-import com.DingTu.Base.ICallback;
 import com.DingTu.Base.PubVar;
 import com.DingTu.Base.Tools;
 import com.DingTu.Data.GpsLine;
@@ -23,8 +21,6 @@ import com.DingTu.mapcontainer.R;
 
 import com.DingTu.Cargeometry.Coordinate;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by Dingtu2 on 2017/6/1.

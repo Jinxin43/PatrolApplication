@@ -1,8 +1,8 @@
 package com.example.dingtu2.myapplication.Login;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
-import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +60,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends LifecycleActivity implements View.OnClickListener,
+public class LoginActivity extends Activity implements View.OnClickListener,
         AdapterView.OnItemClickListener, PopupWindow.OnDismissListener {
 
 

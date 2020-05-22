@@ -1,7 +1,7 @@
 package com.example.dingtu2.myapplication;
 
 import android.app.Dialog;
-import android.arch.lifecycle.LifecycleFragment;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.media.ExifInterface;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
@@ -77,7 +78,7 @@ import retrofit2.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventActivityFragment extends LifecycleFragment {
+public class EventActivityFragment extends Fragment {
     
     public static ICallback photoCallBack = null;
     final PatrolEventEntity roundEventEntity = new PatrolEventEntity();
@@ -147,7 +148,7 @@ public class EventActivityFragment extends LifecycleFragment {
             }
 
         } catch (Exception ex) {
-            Toast.makeText(mOwner, ex.getMessage(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mOwner, ex.getMessage(), Toast.LENGTH_SHORT).show();
             //TODO：save to log
         }
     }
@@ -187,39 +188,40 @@ public class EventActivityFragment extends LifecycleFragment {
         ListAdapter adapter = gridView.getAdapter();
 
         List<String> delPhotos = new ArrayList<String>();
+         if(adapter!=null&&adapter.getCount()>0) {
+             for (int i = 0; i < adapter.getCount(); i++) {
+                 HashMap<String, Object> map = (HashMap<String, Object>) adapter.getItem(i);
+                 View view = gridView.getChildAt(i);
+                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_select);
+                 if (checkBox.isChecked()) {
+                     String fileName = map.get("image") + "";
+                     File file = new File(fileName);
+                     if (file.exists()) {
+                         file.delete();
+                     }
 
-        for (int i = 0; i < adapter.getCount(); i++) {
-            HashMap<String, Object> map = (HashMap<String, Object>) adapter.getItem(i);
-            View view = gridView.getChildAt(i);
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_select);
-            if (checkBox.isChecked()) {
-                String fileName = map.get("image") + "";
-                File file = new File(fileName);
-                if (file.exists()) {
-                    file.delete();
-                }
-
-                String bigFileName = fileName.replace("/samllPhoto", "");
-                File bigfile = new File(bigFileName);
-                if (bigfile.exists()) {
-                    bigfile.delete();
-                }
-                bigfile.delete();
+                     String bigFileName = fileName.replace("/samllPhoto", "");
+                     File bigfile = new File(bigFileName);
+                     if (bigfile.exists()) {
+                         bigfile.delete();
+                     }
+                     bigfile.delete();
 
 
-                for (String f : mPhotoNameList) {
-                    if (f.equals(map.get("text") + "")) {
-                        delPhotos.add(f);
-                    }
-                }
-            }
-        }
+                     for (String f : mPhotoNameList) {
+                         if (f.equals(map.get("text") + "")) {
+                             delPhotos.add(f);
+                         }
+                     }
+                 }
+             }
 
-        for (String f : delPhotos) {
-            mPhotoNameList.remove(f);
-        }
+             for (String f : delPhotos) {
+                 mPhotoNameList.remove(f);
+             }
 
-        showPhotos();
+             showPhotos();
+         }
 
     }
 
@@ -454,7 +456,7 @@ public class EventActivityFragment extends LifecycleFragment {
                     }
                     canvasTemp.drawText(pswz, 8, h - 150, p);
 
-                    canvasTemp.save(Canvas.ALL_SAVE_FLAG);
+                    canvasTemp.save();
                     canvasTemp.restore();
 
                     FileOutputStream fos = new FileOutputStream(f1);
@@ -496,16 +498,17 @@ public class EventActivityFragment extends LifecycleFragment {
                 //存储exif信息
 
                 try {
-                    String[] Coor = PubVar.m_GPSLocate.getJWGPSCoordinate().split(",");
+                   if(PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx != null){
+                        String[] Coor = PubVar.m_GPSLocate.getJWGPSCoordinate().split(",");
 
-                    ExifInterface exifInfo = new ExifInterface(fileName);
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, Tools.ConvertToSexagesimal(Coor[0]));
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE, Tools.ConvertToSexagesimal(Coor[1]));
-                    String[] GPSDateTime = PubVar.m_GPSLocate.getGPSDateForPhotoFormat();
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, GPSDateTime[1]);
-                    exifInfo.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, GPSDateTime[0]);
+                        ExifInterface exifInfo = new ExifInterface(fileName);
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, Tools.ConvertToSexagesimal(Coor[0]));
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_LATITUDE, Tools.ConvertToSexagesimal(Coor[1]));
+                        String[] GPSDateTime = PubVar.m_GPSLocate.getGPSDateForPhotoFormat();
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, GPSDateTime[1]);
+                        exifInfo.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, GPSDateTime[0]);
 
                     if (PubVar.m_GPSLocate.m_LocationEx != null) {
                         exif.put("lat:", PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude());
@@ -513,9 +516,11 @@ public class EventActivityFragment extends LifecycleFragment {
                         exif.put("gpsTime", PubVar.m_GPSLocate.m_LocationEx.GetGpsDate() + " " + PubVar.m_GPSLocate.m_LocationEx.GetGpsTime());
                     }
 
-                    Log.d("exif save", exif.toString());
-                    exifInfo.setAttribute(ExifInterface.TAG_USER_COMMENT, exif.toString());
-                    exifInfo.saveAttributes();
+                        Log.d("exif save", exif.toString());
+                        exifInfo.setAttribute(ExifInterface.TAG_USER_COMMENT, exif.toString());
+                        exifInfo.saveAttributes();
+                    }
+
                 } catch (Exception io) {
                     //TODO:save to log
                     io.printStackTrace();

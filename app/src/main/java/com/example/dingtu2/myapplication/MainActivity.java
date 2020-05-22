@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -80,6 +79,7 @@ import com.example.dingtu2.myapplication.manager.PatrolManager;
 import com.example.dingtu2.myapplication.manager.ReuploadManager;
 import com.example.dingtu2.myapplication.manager.TraceManager;
 import com.example.dingtu2.myapplication.manager.UploadMananger;
+import com.example.dingtu2.myapplication.utils.SharedPreferencesUtils;
 import com.example.dingtu2.myapplication.utils.UpdateManager;
 import com.example.dingtu2.myapplication.viewmodel.RoundViewModel;
 
@@ -88,7 +88,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -108,6 +107,7 @@ import retrofit2.Response;
 import static com.DingTu.mapcontainer.Tools.AddPolygon;
 import static com.DingTu.mapcontainer.Tools.AddPolyline;
 import static com.DingTu.mapcontainer.Tools.ZoomInOutPan;
+import static com.example.dingtu2.myapplication.utils.SharedPreferencesUtils.putBoolean;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainMapFragment.OnFragmentInteractionListener,
@@ -252,13 +252,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-
     private void initData() {
+
         mTrackId = getIntent().getStringExtra("trackId");
-//        DatabaseCreator.getInstance(mContext).createDB(this);
+        String mType = getIntent().getStringExtra("type");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setOverflowIcon(null);
         setSupportActionBar(toolbar);
@@ -278,16 +275,9 @@ public class MainActivity extends AppCompatActivity
         AppSetting.applicaton = this.getApplication();
         mContext = this;
         if (mTrackId != null && !TextUtils.isEmpty(mTrackId)) {
-            mapFragment = MainMapFragment.newInstance(mTrackId, null);
+            mapFragment = MainMapFragment.newInstance(mTrackId, mType);
         } else {
-            Bundle bundle = getIntent().getExtras();    //得到传过来的bundle
-            if (bundle != null && bundle.getInt("officialType") != 0) {
-                mapFragment = MainMapFragment.newInstance(null, null);
-                mapFragment.setArguments(bundle);
-            } else {
-                mapFragment = MainMapFragment.newInstance(null, null);
-            }
-
+            mapFragment = MainMapFragment.newInstance(null, null);
         }
 
         getFragmentManager().beginTransaction().replace(R.id.mMainContainer, mapFragment).commit();
@@ -326,7 +316,6 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_dashboard);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
     }
 
     @Override
@@ -359,8 +348,8 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void doChangeByExtra() {
-        String from = this.getIntent().getStringExtra("from");
+    private void doChangeByExtra(Intent intent) {
+        String from = intent.getStringExtra("from");
         if (from == null) {
             Log.d("doChangeByExtra from", "from is null");
             return;
@@ -391,7 +380,8 @@ public class MainActivity extends AppCompatActivity
         roundEntity.setRoundType(10);
         roundEntity.setRoundStatus(0);
 
-        mIsRounding = true;
+//        mIsRounding = true;
+        putBoolean(this, "mIsRounding", true);
         AppSetting.curRound = roundEntity;
         GenDataBase db = DatabaseCreator.getInstance(AppSetting.applicaton).getDatabase();
         if (db != null) {
@@ -484,7 +474,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initRounding() {
-        if (mIsRounding) {
+        if (SharedPreferencesUtils.getBoolean(getApplicationContext(), "mIsRounding")) {
             PubVar.m_GPSLocate.OpenGPS();
             PubVar.m_DoEvent.mRoundLinePresenter.setTraceCallback(new ICallback() {
                 @Override
@@ -964,7 +954,6 @@ public class MainActivity extends AppCompatActivity
 
         //设置工程空间坐标系统，工程坐标系统存储于StaticObject.soProjectSystem.
         pWorkspace.SetCoorSystemInfo(StaticObject.soProjectSystem.GetCoorSystem());
-
         //创建MAP对象，在此处赋最大范围this.setFullExtend(StaticObject.soMapCellIndex.GetCellExtend());
         Map map = new Map(PubVar.m_MapControl);
         map.SetScaleBar(PubVar.m_DoEvent.mScaleBar);
@@ -1056,7 +1045,11 @@ public class MainActivity extends AppCompatActivity
 //            {
 //                Log.e("nav_command",ex.getMessage());
 //            }
-            addPatrolPoint();
+            if (AppSetting.curRound != null) {
+                addPatrolPoint();
+            } else {
+                Toast.makeText(this, "请先开始巡护！", Toast.LENGTH_LONG).show();
+            }
 
 
         } else if (id == R.id.nav_startRound) {
@@ -1118,7 +1111,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        startActivity(new Intent(mContext, RoundActivity.class));
+        startActivity(new Intent(mContext, EventActivity.class));
     }
 
     private void stopRound() {
@@ -1132,7 +1125,7 @@ public class MainActivity extends AppCompatActivity
             public void OnClick(String Str, Object ExtraStr) {
                 if (Str.equals("Finish")) {
                     AppSetting.curRound = null;
-                    mIsRounding = false;
+                    putBoolean(getApplicationContext(), "mIsRounding", false);
                     unloadTraces = true;
 
 //                    PubVar.m_DoEvent.mRoundLinePresenter = new RoundGPSLine();
@@ -1145,7 +1138,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startNormalPatrol() {
-        if (mIsRounding) {
+        if (SharedPreferencesUtils.getBoolean(getApplicationContext(), "mIsRounding")) {
             Tools.ShowMessageBox("正在进行巡护，请完成正在进行的巡护后再开始新的巡护！");
             return;
         }
@@ -1178,9 +1171,7 @@ public class MainActivity extends AppCompatActivity
                 arrRoundWeather);
         roundWeatherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRoundWeather.setAdapter(roundWeatherAdapter);
-
-
-        if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0.000001 || PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0.000001) {
+        if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0.000001 && PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0.000001) {
             try {
                 ((TextView) layout.findViewById(R.id.tvLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.tvLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1243,7 +1234,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     PatrolManager.getInstance().savePatrol(roundEntity);
-                    mIsRounding = true;
+                    putBoolean(getApplicationContext(), "mIsRounding", true);
                     AppSetting.curRound = roundEntity;
                     PubVar.m_DoEvent.mRoundLinePresenter.Start(lkDataCollectType.enGps_T, AppSetting.curRound.getStartTime());
                     initRounding();
@@ -1322,8 +1313,7 @@ public class MainActivity extends AppCompatActivity
 
         final View layout = inflater.inflate(R.layout.dialog_addpatrolpoint, null);
         addPointDialog.setView(layout);
-
-        if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+        if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
             try {
                 ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1335,7 +1325,7 @@ public class MainActivity extends AppCompatActivity
         ((TextView) layout.findViewById(R.id.etPointLon)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+                if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
                     try {
                         ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                         ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1346,6 +1336,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     Toast.makeText(v.getContext(), "请开启GPS并在开阔地带精确定位,然后刷新位置!", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
@@ -1354,7 +1345,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    if (PubVar.m_GPSLocate.m_LocationEx != null
+                    if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null
                             && PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0
                             && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0) {
                         PatrolPointEntity pointEntity = new PatrolPointEntity();
@@ -1398,13 +1389,13 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(MainActivity.this, "请开启GPS并在开阔地带精确定位!", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-
                 } catch (Exception ex) {
                     Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
+
             }
+
         });
 
         addPointDialog.setNegativeButton("返回", new DialogInterface.OnClickListener() {
@@ -1660,4 +1651,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        doChangeByExtra(intent);
+    }
 }

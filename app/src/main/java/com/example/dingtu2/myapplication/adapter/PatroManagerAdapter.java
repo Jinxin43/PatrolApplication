@@ -1,5 +1,4 @@
 package com.example.dingtu2.myapplication.adapter;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,30 +9,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.example.dingtu2.myapplication.MainActivity;
 import com.example.dingtu2.myapplication.R;
-import com.example.dingtu2.myapplication.model.ResultRouteBean;
-
+import com.example.dingtu2.myapplication.model.ManagerBean;
 import java.util.List;
 
+public class PatroManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
     private final Context mContext;
-    private String mType;
-    public   ContentLoadingProgressBar contentLoadingProgressBar;
-    private List<ResultRouteBean> mData;
+    private final String mType;
+    public ContentLoadingProgressBar contentLoadingProgressBar;
+    private List<ManagerBean> mData;
     private final static int TYPE_CONTENT=0;//正常内容
     private final static int TYPE_FOOTER=1;//加载View
+    private boolean mIsoffice;
 
 
-    public PartroAdapter(Context context, String mType) {
+    public PatroManagerAdapter(Context context, String mType) {
         this.mContext = context;
         this.mType=mType;
     }
-
-
-
     @Override
     public int getItemViewType(int position) {
         if (position==mData.size()){
@@ -65,17 +61,16 @@ public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         } else{
             MyViewHolder holders= (MyViewHolder) holder;
-            ResultRouteBean bean = mData.get(position);
-            if(bean.getEndTime()==null||bean.getEndTime().equals("null")){
-                holders.mTvTime.setText(bean.getStartTime() );
+            ManagerBean bean = mData.get(position);
+            if(bean.getEndtime()==null||bean.getEndtime().equals("null")){
+                holders.mTvTime.setText(bean.getStarttime().replace("T"," "));
             }else{
-                holders.mTvTime.setText(bean.getStartTime() + "\n" + bean.getEndTime());
+                holders.mTvTime.setText(bean.getStarttime().replace("T"," ") + "\n" + bean.getEndtime().replace("T"," "));
             }
-            holders.mContent.setText(bean.getPatrolUserName());
+            holders.mContent.setText(bean.getPatrolusername());
             holders.mItemPeople.setText(bean.getName());
-            holders.mTvWeather.setText(bean.getWeather());
-            if(bean.getDiscription()!=null) {
-                holders.mTvDescribe.setText(bean.getDiscription());
+            if(bean.getDescription()!=null){
+                holders.mTvDescribe.setText(bean.getDescription());
             }else{
                 holders.mTvDescribe.setText("");
             }
@@ -83,10 +78,10 @@ public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 @Override
                 public void onClick(View view) {
                     if(mData!=null&&mData.size()>0) {
-                            Intent intent = new Intent(mContext, MainActivity.class);
-                            intent.putExtra("trackId", mData.get(position).getId());
-                            mContext.startActivity(intent);
-                            ((Activity) mContext).finish();
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        intent.putExtra("trackId", mData.get(position).getId());
+                        mContext.startActivity(intent);
+                        ((Activity) mContext).finish();
                     }
 
                 }
@@ -99,8 +94,10 @@ public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 holders.mTvStyle.setText(mContext.getResources().getString(R.string.duty_round));
             }
             if(mType.equals("my")){
-             holders.mAccount.setVisibility(View.GONE);
+                holders.mAccount.setVisibility(View.GONE);
             }else if(mType.equals("all")){
+                holders.mAccount.setVisibility(View.VISIBLE);
+            }else if((mType.equals("manager"))){
                 holders.mAccount.setVisibility(View.VISIBLE);
             }
 
@@ -121,19 +118,19 @@ public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     }
 
-    public void setData(List<ResultRouteBean> mRouteBean) {
+    public void setData(List<ManagerBean> mRouteBean, boolean IsOffice) {
         this.mData = mRouteBean;
+        this.mIsoffice=IsOffice;
         notifyDataSetChanged();
     }
 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTvPatrolType, mTvTime, mContent,mItemPeople, mTvWeather, mTvDescribe,mTvStyle;
+        private TextView mTvTime, mContent,mItemPeople, mTvWeather, mTvDescribe,mTvStyle;
         private LinearLayout mAccount;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-//            mTvPatrolType = (TextView) itemView.findViewById(R.id.tv_patrolType);
             mAccount=(LinearLayout)itemView.findViewById(R.id.ll_all_history);
             mTvTime = (TextView) itemView.findViewById(R.id.item_time);
             mContent = (TextView) itemView.findViewById(R.id.content);
@@ -152,3 +149,4 @@ public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 }
+

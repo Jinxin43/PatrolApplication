@@ -70,7 +70,7 @@ public class PointListActivity extends AppCompatActivity {
             allPoints = new ArrayList<PatrolPointEntity>();
         }
 
-        PointListActivity.PointListAdapter adapter = new PointListActivity.PointListAdapter(this.getApplicationContext(), allPoints,
+     PointListAdapter adapter = new PointListAdapter(this.getApplicationContext(), allPoints,
                 R.layout.fragment_pointlist_item,
                 new String[]{"ID", "pointType", "gpsTime", "uploadStatus", "longitude", "latitude", "height"},
                 new int[]{R.id.tvPointType, R.id.tvPointTime, R.id.tvUploadStatus, R.id.tvLongitude, R.id.tvLatitude, R.id.tvHeight});

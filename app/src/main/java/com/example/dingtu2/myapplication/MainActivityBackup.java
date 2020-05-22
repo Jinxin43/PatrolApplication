@@ -1253,7 +1253,7 @@ public class MainActivityBackup extends AppCompatActivity
         roundWeatherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRoundWeather.setAdapter(roundWeatherAdapter);
 
-        if (PubVar.m_GPSLocate.m_LocationEx != null) {
+            if (PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx != null) {
             try {
                 ((TextView) layout.findViewById(R.id.tvLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.tvLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1304,12 +1304,28 @@ public class MainActivityBackup extends AppCompatActivity
                     UploadMananger.getInstance().uploadRound(roundEntity, new ICallback() {
                         @Override
                         public void OnClick(String Str, Object ExtraStr) {
+
                             if (Str.equals("success")) {
-                                saveStartPoint(PubVar.m_GPSLocate.m_LocationEx, true);
-                                Toast.makeText(MainActivityBackup.this.getBaseContext(), "上传成功", Toast.LENGTH_SHORT);
+                                if (PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx != null) {
+                                    saveStartPoint(PubVar.m_GPSLocate.m_LocationEx, true);
+                                    Toast.makeText(MainActivityBackup.this.getBaseContext(), "上传成功", Toast.LENGTH_SHORT);
+                                }
+
+//                                else if (PubVar.m_BaiduLocate!=null&&PubVar.m_BaiduLocate.m_LocationEx != null) {
+//                                    saveStartPoint(PubVar.m_BaiduLocate.m_LocationEx, true);
+//                                    Toast.makeText(MainActivityBackup.this.getBaseContext(), "上传成功", Toast.LENGTH_SHORT);
+//                                }
                             } else {
-                                saveStartPoint(PubVar.m_GPSLocate.m_LocationEx, false);
-                                Toast.makeText(MainActivityBackup.this.getBaseContext(), "上传失败", Toast.LENGTH_SHORT);
+                                if(PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx!=null){
+                                    saveStartPoint(PubVar.m_GPSLocate.m_LocationEx, false);
+                                    Toast.makeText(MainActivityBackup.this.getBaseContext(), "上传失败", Toast.LENGTH_SHORT);
+                                }
+
+//                                else if(PubVar.m_BaiduLocate!=null&&PubVar.m_BaiduLocate.m_LocationEx != null){
+//                                    saveStartPoint(PubVar.m_BaiduLocate.m_LocationEx, false);
+//                                    Toast.makeText(MainActivityBackup.this.getBaseContext(), "上传失败", Toast.LENGTH_SHORT);
+//                                }
+
                             }
                         }
                     });
@@ -1379,7 +1395,7 @@ public class MainActivityBackup extends AppCompatActivity
         final View layout = inflater.inflate(R.layout.dialog_addpatrolpoint, null);
         addPointDialog.setView(layout);
 
-        if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+        if (PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
             try {
                 ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1391,7 +1407,7 @@ public class MainActivityBackup extends AppCompatActivity
         ((TextView) layout.findViewById(R.id.etPointLon)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+                if (PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
                     try {
                         ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                         ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1410,7 +1426,7 @@ public class MainActivityBackup extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    if (PubVar.m_GPSLocate.m_LocationEx != null
+                    if (PubVar.m_GPSLocate!=null&&PubVar.m_GPSLocate.m_LocationEx != null
                             && PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0
                             && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0) {
                         PatrolPointEntity pointEntity = new PatrolPointEntity();

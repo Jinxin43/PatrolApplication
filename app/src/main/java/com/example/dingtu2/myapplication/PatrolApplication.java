@@ -1,6 +1,7 @@
 package com.example.dingtu2.myapplication;
 
 import android.app.Application;
+import android.support.multidex.MultiDex;
 
 import com.example.dingtu2.myapplication.utils.CrashCatchHandler;
 
@@ -15,5 +16,6 @@ public class PatrolApplication extends Application {
         super.onCreate();
         CrashCatchHandler crashCatchHandler = CrashCatchHandler.getInstance();//获得单例
         crashCatchHandler.init(getApplicationContext());//初始化,传入context
+        MultiDex.install(this);
     }
 }

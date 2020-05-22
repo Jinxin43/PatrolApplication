@@ -98,7 +98,9 @@ public class SimpleRender extends IRender {
             _Font.setColor(Color.parseColor(labelFont.split(",")[0]));
             TextSymbol TS = new TextSymbol();
             TS.setTextFont(_Font);
-            this._Symbol.setTextSymbol(TS);
+            if(_Symbol!=null) {
+                this._Symbol.setTextSymbol(TS);
+            }
         }
     }
 

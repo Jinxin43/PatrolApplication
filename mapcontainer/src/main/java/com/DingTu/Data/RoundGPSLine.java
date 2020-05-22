@@ -260,7 +260,7 @@ public class RoundGPSLine implements IOnTouchCommand,IOnPaint {
         int SYS_ID =-1;
         if (this.m_DataCollectStatus == lkGpsReceiveDataStatus.enStop)
         {
-            Tools.ShowToast(PubVar.m_DoEvent.m_Context, Tools.ToLocale("当前没有正在采集的实体！"));
+//            Tools.ShowToast(PubVar.m_DoEvent.m_Context, Tools.ToLocale("当前没有正在采集的实体！"));
             return SYS_ID;
         }
 
@@ -574,7 +574,6 @@ public class RoundGPSLine implements IOnTouchCommand,IOnPaint {
 
         }
         //绘制轨迹点信息，形成轨迹线
-//        Point[] PList = PubVar.m_MapControl.getMap().getViewConvert().MapPointsToScreePoints(this.m_GPSTrackPointList);
         Point[] PList =  PubVar.m_MapControl.getMap().getViewConvert().ClipPolyline(this.m_GPSTrackPointList,0,0);
         if (PList.length > 0)
         {

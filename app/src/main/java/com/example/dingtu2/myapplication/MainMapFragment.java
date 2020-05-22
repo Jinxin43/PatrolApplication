@@ -67,6 +67,8 @@ import com.example.dingtu2.myapplication.manager.TraceManager;
 import com.example.dingtu2.myapplication.manager.UploadMananger;
 import com.example.dingtu2.myapplication.manager.UserManager;
 import com.example.dingtu2.myapplication.model.PointBean;
+import com.example.dingtu2.myapplication.utils.SharedPreferencesUtils;
+import com.example.dingtu2.myapplication.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -145,13 +147,16 @@ public class MainMapFragment extends Fragment {
     };
 
     private void startDraw() {
+        if (PubVar.m_DoEvent.m_ProjectDB.saveProjectInfo(PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetName(), String.valueOf(PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetCenterMeridian()))) {
+            MainActivity.mMapSettingCallbak.OnClick("", null);
+        }
         if (mListPoints != null && mListPoints.size() > 0) {
             m_trackList = new ArrayList<Coordinate>();
             if (m_trackList != null && m_trackList.size() > 0) {
                 m_trackList.clear();
             }
             for (int i = 0; i < mListPoints.size(); i++) {
-                Coordinate coord = StaticObject.soProjectSystem.WGS84ToXY(Double.parseDouble(mListPoints.get(i).getLongitude()), Double.parseDouble(mListPoints.get(i).getLatitude()), 0);
+                Coordinate coord = new Coordinate(Double.parseDouble(mListPoints.get(i).getX()), Double.parseDouble(mListPoints.get(i).getY()));
                 m_trackList.add(coord);
             }
             PubVar.mBaseLine.UpdateData(m_trackList);
@@ -209,19 +214,38 @@ public class MainMapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        myView = inflater.inflate(R.layout.fragment_main_map, container, false);
+       myView = inflater.inflate(R.layout.fragment_main_map, container, false);
         ButterKnife.bind(this, myView);
         addMapViewOnUI();
         initPubVar();
         initWorkDirectionary();
-//        openProject();
         startGPS();
         initBusiness();
         if (mParam1 != null) {
             mListPoints = new ArrayList<PointBean>();
-            getDataPointDraw(mParam1);
+            if (Utils.isNetworkAvailable(getActivity())) {
+                getDataPointDraw(mParam1);
+            } else {
+                List<TraceEntity> mEntity = TraceManager.getInstance().getUnloadTracesByPatrolId(mParam1);
+                if (mEntity != null && mEntity.size() > 0) {
+                    for (int i = 0; i < mEntity.size(); i++) {
+                        PointBean bean = new PointBean();
+                        bean.setX(String.valueOf(mEntity.get(i).getX()));
+                        bean.setY(String.valueOf(mEntity.get(i).getY()));
+                        bean.setLatitude(String.valueOf(mEntity.get(i).getLatitude()));
+                        bean.setLongitude(String.valueOf(mEntity.get(i).getLongitude()));
+                        bean.setCreatetime(String.valueOf(mEntity.get(i).getGpsTime()));
+                        bean.setUserid(String.valueOf(mEntity.get(i).getUserID()));
+                        bean.setId(String.valueOf(mEntity.get(i).getId()));
+                        bean.setRoundId(String.valueOf(mEntity.get(i).getRoundID()));
+                        bean.setHigh(String.valueOf(mEntity.get(i).getHeight()));
+                        mListPoints.add(bean);
+                    }
+                }
+                startDraw();
         }
+
+    }
         return myView;
     }
 
@@ -245,6 +269,8 @@ public class MainMapFragment extends Fragment {
                     for (int i = 0; i < jsonarray.length(); i++) {
                         JSONObject object = (JSONObject) new JSONArray(data).get(i);
                         PointBean bean = new PointBean();
+                        bean.setX(object.getString("x"));
+                        bean.setY(object.getString("y"));
                         bean.setLatitude(object.getString("Latitude"));
                         bean.setLongitude(object.getString("Longitude"));
                         bean.setCreatetime(object.getString("Createtime"));
@@ -500,7 +526,6 @@ public class MainMapFragment extends Fragment {
                                 location.SetGpsAltitude(trace.getHeight());
                                 location.SetGpsDate(dateFormat.format(trace.getGpsTime()));
                                 location.SetGpsTime(timeFormat.format(trace.getGpsTime()));
-
                                 PubVar.m_DoEvent.mRoundLinePresenter.UpdateGpsPosition(location, false);
 
 
@@ -513,11 +538,10 @@ public class MainMapFragment extends Fragment {
                         Log.d("GetTrace", ex.getMessage());
                         Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
-                    mIsRounding = true;
+                    SharedPreferencesUtils.putBoolean(getActivity(), "mIsRounding", true);
                     initRounding();
                 } else {
-                    mIsRounding = false;
+//                    mIsRounding = false;
                     stopRound();
                 }
 
@@ -629,7 +653,11 @@ public class MainMapFragment extends Fragment {
 //                {
 //                    exitDraw();
 //                }
-                addPatrolPoint();
+                if (AppSetting.curRound != null) {
+                    addPatrolPoint();
+                } else {
+                    Toast.makeText(getActivity(), "请先开始巡护！", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.btnFinishRound:
                 stopRound();
@@ -741,7 +769,7 @@ public class MainMapFragment extends Fragment {
                         }
                         PubVar.m_DoEvent.mRoundLinePresenter.setGPSTrackList(new ArrayList<Coordinate>());
                         AppSetting.curRound = null;
-                        mIsRounding = false;
+                        SharedPreferencesUtils.putBoolean(getActivity(), "mIsRounding", false);
                         unloadTraces = true;
 
                     } catch (Exception ex) {
@@ -760,13 +788,13 @@ public class MainMapFragment extends Fragment {
 
 
     private void startNormalPatrol() {
-        if (mIsRounding) {
+        if (SharedPreferencesUtils.getBoolean(getActivity(), "mIsRounding")) {
             Tools.ShowMessageBox("正在进行巡护，请完成正在进行的巡护后再开始新的巡护！");
             return;
         }
 
         AlertDialog.Builder startRoundDialog = new AlertDialog.Builder(getActivity());
-        startRoundDialog.setCancelable(true);
+        startRoundDialog.setCancelable(false);
         startRoundDialog.setTitle("开始巡护");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -816,7 +844,8 @@ public class MainMapFragment extends Fragment {
 
 
         try {
-            if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0.000001 || PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0.000001) {
+
+            if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0.000001 && PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0.000001) {
 
                 ((TextView) layout.findViewById(R.id.tvLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.tvLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -899,7 +928,7 @@ public class MainMapFragment extends Fragment {
                     } catch (Exception ex) {
                         Toast.makeText(getActivity(), "保存起始点坐标失败" + ex.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    mIsRounding = true;
+                    SharedPreferencesUtils.putBoolean(getActivity(), "mIsRounding", true);
                     initRounding();
                     AppSetting.curRound = roundEntity;
                     PubVar.m_DoEvent.mRoundLinePresenter.Start(lkDataCollectType.enGps_T, AppSetting.curRound.getStartTime());
@@ -933,7 +962,6 @@ public class MainMapFragment extends Fragment {
                 } catch (Exception ex) {
                     isStarting = false;
                     ex.printStackTrace();
-                    Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -949,7 +977,7 @@ public class MainMapFragment extends Fragment {
     }
 
     private void initRounding() {
-        if (mIsRounding) {
+        if (SharedPreferencesUtils.getBoolean(getActivity(), "mIsRounding")) {
             PubVar.m_DoEvent.mRoundLinePresenter.setTraceCallback(new ICallback() {
                 @Override
                 public void OnClick(String Str, final Object ExtraStr) {
@@ -1146,7 +1174,7 @@ public class MainMapFragment extends Fragment {
                             patrolPointEntity.setUploadStatus(1);
                             PatrolManager.getInstance().savePatrolPoint(patrolPointEntity);
                         } catch (Exception ex) {
-                            Toast.makeText(getActivity(), "上传起始点" + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "上传起始点异常！", Toast.LENGTH_SHORT).show();
                         }
                         Toast.makeText(getActivity(), "起始点已上传", Toast.LENGTH_SHORT).show();
 
@@ -1170,7 +1198,7 @@ public class MainMapFragment extends Fragment {
         final View layout = inflater.inflate(R.layout.dialog_addpatrolpoint, null);
         addPointDialog.setView(layout);
 
-        if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+        if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
             try {
                 ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1179,10 +1207,11 @@ public class MainMapFragment extends Fragment {
 
             }
         }
+
         ((TextView) layout.findViewById(R.id.etPointLon)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
+                if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
                     try {
                         ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                         ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
@@ -1201,7 +1230,7 @@ public class MainMapFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    if (PubVar.m_GPSLocate.m_LocationEx != null
+                    if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null
                             && PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() > 0
                             && PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() > 0) {
                         PatrolPointEntity pointEntity = new PatrolPointEntity();

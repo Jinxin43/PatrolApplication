@@ -14,8 +14,8 @@ import java.util.HashMap;
  */
 
 public class AppSetting {
-//        public static final String baseUrl = "http://111.20.63.66:8001";//周保
-    public static final String baseUrl = "http://114.115.255.125:8001";//华为云
+    public static final String baseUrl = "http://111.20.63.66:8001";//周保
+//    public static final String baseUrl = "http://114.115.255.125:8001";//华为云
     public static UserEntity curUser;
     public static PatrolEntity curRound;
     public static String curUserKey;
@@ -30,6 +30,7 @@ public class AppSetting {
     public static HashMap<String, String> myDutyArea = new HashMap<String, String>();
     private static Object mLock = new Object();
     private static DbManager.DaoConfig daoConfig;
+    public static Boolean mIsRounding=false;
 
 //    public static DbManager.DaoConfig getDbConfig() {
 //        if (daoConfig == null) {

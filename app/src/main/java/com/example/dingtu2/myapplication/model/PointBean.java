@@ -9,6 +9,24 @@ public class PointBean {
     private String roundId;
     private String high;
     private String gpsTime;
+    private String x;
+    private String y;
+
+    public String getX() {
+        return x;
+    }
+
+    public void setX(String x) {
+        this.x = x;
+    }
+
+    public String getY() {
+        return y;
+    }
+
+    public void setY(String y) {
+        this.y = y;
+    }
 
     public String getLatitude() {
         return Latitude;

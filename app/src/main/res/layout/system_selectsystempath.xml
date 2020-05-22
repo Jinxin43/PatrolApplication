@@ -51,7 +51,6 @@
             android:drawableLeft="@drawable/v1_space_height"
             android:background="@drawable/buttonstyle"
             android:tag="退出系统"
-            android:text="退出系统"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
