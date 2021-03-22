@@ -27,9 +27,9 @@ public class TraceEntity implements Trace {
     @Column(name = "longitude")
     private double longitude;
     @Column(name = "X")
-    private double x;
+    private String x;
     @Column(name = "Y")
-    private double y;
+    private String y;
     @Column(name = "srid")
     private String srid;
     @Column(name = "height")
@@ -135,19 +135,21 @@ public class TraceEntity implements Trace {
         this.saveTime = saveTime;
     }
 
-    public double getX() {
-        return this.x;
+    @Override
+    public String getX() {
+        return x;
     }
 
-    public void setX(double x) {
+    public void setX(String x) {
         this.x = x;
     }
 
-    public double getY() {
-        return this.y;
+    @Override
+    public String getY() {
+        return y;
     }
 
-    public void setY(double y) {
+    public void setY(String y) {
         this.y = y;
     }
 

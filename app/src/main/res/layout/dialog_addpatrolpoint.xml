@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:text="经度:"/>
         <EditText
-            android:id="@+id/etPointLat"
+            android:id="@+id/etPointLon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="0.0000000"
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:text="纬度:"/>
         <EditText
-            android:id="@+id/etPointLon"
+            android:id="@+id/etPointLat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="0.0000000"

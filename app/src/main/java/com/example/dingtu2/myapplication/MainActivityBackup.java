@@ -83,6 +83,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -592,16 +593,37 @@ public class MainActivityBackup extends AppCompatActivity
                             }
 
                             Coordinate coord = StaticObject.soProjectSystem.WGS84ToXY(location.GetGpsLongitude(), location.GetGpsLatitude(), location.GetGpsAltitude());
-
-                            traceEntity.setSrid("2381");
+                            String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                            if(name.equals("西安80坐标")){
+                                traceEntity.setSrid("2381");
+                            }else if(name.equals("北京54坐标")){
+                                traceEntity.setSrid("2433");
+                            }else if(name.equals("2000国家大地坐标系")){
+                                traceEntity.setSrid("4545");
+                            }else if(name.equals("WGS-84坐标")){
+                                traceEntity.setSrid("4326");
+                            }
                             traceEntity.setGpsTime(traceEntity.getGpsTime());
                             traceEntity.setUserID(AppSetting.curUserKey);
                             traceEntity.setHeight(location.GetGpsAltitude());
-                            traceEntity.setLatitude(location.GetGpsLatitude());
-                            traceEntity.setLongitude(location.GetGpsLongitude());
-                            traceEntity.setX(coord.getX());
-                            traceEntity.setY(coord.getY());
-                            traceEntity.setSrid("2381");
+                            if(location.GetGpsLatitude()>0&&location.GetGpsLongitude()>0) {
+                                traceEntity.setLatitude(location.GetGpsLatitude());
+                                traceEntity.setLongitude(location.GetGpsLongitude());
+                                NumberFormat nf = NumberFormat.getInstance();
+                                nf.setGroupingUsed(false);
+                                traceEntity.setX(nf.format(coord.getX()));
+                                traceEntity.setY(nf.format(coord.getY()));
+                            }
+
+                            if(name.equals("西安80坐标")){
+                                traceEntity.setSrid("2381");
+                            }else if(name.equals("北京54坐标")){
+                                traceEntity.setSrid("2433");
+                            }else if(name.equals("2000国家大地坐标系")){
+                                traceEntity.setSrid("4545");
+                            }else if(name.equals("WGS-84坐标")){
+                                traceEntity.setSrid("4326");
+                            }
                             traceEntity.setUploadStatus(0);
                             traceEntity.setSaveTime(new Date());
 
@@ -1106,11 +1128,11 @@ public class MainActivityBackup extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.action_mapsettings) {
-            Intent mapSettingIntent = new Intent(this.getApplicationContext(), MapSettingActivity.class);
-            this.startActivity(mapSettingIntent);
-
-        }
+//        if (id == R.id.action_mapsettings) {
+//            Intent mapSettingIntent = new Intent(this.getApplicationContext(), MapSettingActivity.class);
+//            this.startActivity(mapSettingIntent);
+//
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -1362,10 +1384,21 @@ public class MainActivityBackup extends AppCompatActivity
         Coordinate coordinate = StaticObject.soProjectSystem.WGS84ToXY(locationEx.GetGpsLongitude(),
                 locationEx.GetGpsLatitude(),
                 locationEx.GetGpsAltitude());
-        patrolPointEntity.setX(coordinate.getX());
-        patrolPointEntity.setY(coordinate.getY());
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setGroupingUsed(false);
+        patrolPointEntity.setX(nf.format(coordinate.getX()));
+        patrolPointEntity.setY(nf.format(coordinate.getY()));
 //            TODO:auto get srid;
-        patrolPointEntity.setSrid("2381");
+        String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+        if(name.equals("西安80坐标")){
+            patrolPointEntity.setSrid("2381");
+        }else if(name.equals("北京54坐标")){
+            patrolPointEntity.setSrid("2433");
+        }else if(name.equals("2000国家大地坐标系")){
+            patrolPointEntity.setSrid("4545");
+        }else if(name.equals("WGS-84坐标")){
+            patrolPointEntity.setSrid("4326");
+        }
         patrolPointEntity.setPointType("0");
 
         try {
@@ -1440,9 +1473,21 @@ public class MainActivityBackup extends AppCompatActivity
                                 PubVar.m_GPSLocate.m_LocationEx.GetGpsAltitude());
 
                         pointEntity.setPointType("1");
-                        pointEntity.setSrid("2381");
-                        pointEntity.setX(coord.getX());
-                        pointEntity.setY(coord.getY());
+                        String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                        if(name.equals("西安80坐标")){
+                            pointEntity.setSrid("2381");
+                        }else if(name.equals("北京54坐标")){
+                            pointEntity.setSrid("2433");
+                        }else if(name.equals("2000国家大地坐标系")){
+                            pointEntity.setSrid("4545");
+                        }else if(name.equals("WGS-84坐标")){
+                            pointEntity.setSrid("4326");
+                        }
+                        NumberFormat nf = NumberFormat.getInstance();
+                        nf.setGroupingUsed(false);
+                        pointEntity.setX(nf.format(coord.getX()));
+                        pointEntity.setY(nf.format(coord.getY()));
+
                         pointEntity.setRoundID(AppSetting.curRound.getId());
                         //TODO:
 //                       pointEntity.setUserID(AppSetting.curUser.getUserID());

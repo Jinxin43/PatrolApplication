@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyApplication2.iml" filepath="$PROJECT_DIR$/MyApplication2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mapcontainer/mapcontainer.iml" filepath="$PROJECT_DIR$/mapcontainer/mapcontainer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xutils/xutils.iml" filepath="$PROJECT_DIR$/xutils/xutils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyApplication2.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyApplication2.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mapcontainer/MyApplication2.mapcontainer.iml" filepath="$PROJECT_DIR$/.idea/modules/mapcontainer/MyApplication2.mapcontainer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xutils/MyApplication2.xutils.iml" filepath="$PROJECT_DIR$/.idea/modules/xutils/MyApplication2.xutils.iml" />
     </modules>
   </component>
 </project>

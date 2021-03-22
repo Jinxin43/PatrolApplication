@@ -24,7 +24,7 @@ public class XDbManager {
                 File zbDBFile = new File(PubVar.m_SysAbsolutePath + PubVar.m_SysDictionaryName + "/");
                 Log.d("DBpath", PubVar.m_SysAbsolutePath + "/" + PubVar.m_SysDictionaryName + "/");
                 final DbManager.DaoConfig dbConfig = new DbManager.DaoConfig().setDbDir(zbDBFile);
-                dbConfig.setDbVersion(12);
+                dbConfig.setDbVersion(13);
                 dbConfig.setDbName("patrol.dbx");
                 dbConfig.setDbUpgradeListener(new DbManager.DbUpgradeListener() {
 

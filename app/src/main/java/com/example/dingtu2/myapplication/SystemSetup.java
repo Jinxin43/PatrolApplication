@@ -52,7 +52,6 @@ public class SystemSetup {
         fileList.add(SysDir + "/SysFile/Template.dbx" + "," + R.raw.tadata);
         fileList.add(SysDir + "/SysFile/Tadata.dbx" + "," + R.raw.tadata);//采集数据模板文件
         fileList.add(SysDir + "/SysFile/UserConfig.dbx" + "," + R.raw.userconfig);  //用户自定配置模板文件
-
         if (SysDir.equals("")) {
             resultHM.put("Result", "系统主目录缺失");
             return resultHM;

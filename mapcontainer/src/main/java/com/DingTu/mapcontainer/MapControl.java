@@ -170,7 +170,9 @@ public class MapControl extends AppCompatImageView {
             case ZoomInOutPan:
                 _IOnTouchCommand = _ZoomInOutPan;
                 _IOnPaint = _ZoomInOutPan;
-                _Map.Refresh();
+                if(_Map!=null) {
+                    _Map.Refresh();
+                }
                 break;
             //放大
             case ZoomIn:

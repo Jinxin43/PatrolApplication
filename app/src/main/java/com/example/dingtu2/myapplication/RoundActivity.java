@@ -10,13 +10,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.media.ExifInterface;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -26,8 +29,10 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +61,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -137,18 +143,30 @@ public class RoundActivity extends AppCompatActivity {
 
     private String[] arrRoundType = new String[3];
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_round);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+        View customView = LayoutInflater.from(this).inflate(R.layout.actionbar_back, new RelativeLayout(this), false);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setCustomView(customView);
+        ((TextView) customView.findViewById(R.id.tv_back)).setText("巡护详情");
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ((ImageView) customView.findViewById(R.id.iv_back)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         try {
             ButterKnife.bind(this);
             bingToView();
             initSavingDlg();
-            setupActionBar();
+//            setupActionBar();
         } catch (Exception ex) {
 
         }
@@ -183,13 +201,25 @@ public class RoundActivity extends AppCompatActivity {
             lastTrace = new TraceEntity();
             lastTrace.setUserID(AppSetting.curUserKey);
             lastTrace.setHeight(PubVar.m_GPSLocate.m_LocationEx.GetGpsAltitude());
+           if(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude()>0&&PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude()>0) {
             lastTrace.setLatitude(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude());
             lastTrace.setLongitude(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude());
-            lastTrace.setX(coord.getX());
-            lastTrace.setY(coord.getY());
-            lastTrace.setSrid("2381");
+           }
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setGroupingUsed(false);
+            lastTrace.setX(nf.format(coord.getX()));
+            lastTrace.setY(nf.format(coord.getY()));
+            String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+            if(name.equals("西安80坐标")){
+                lastTrace.setSrid("2381");
+            }else if(name.equals("北京54坐标")){
+                lastTrace.setSrid("2433");
+            }else if(name.equals("2000国家大地坐标系")){
+                lastTrace.setSrid("4545");
+            }else if(name.equals("WGS-84坐标")){
+                lastTrace.setSrid("4326");
+            }
             lastTrace.setUploadStatus(0);
-
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (PubVar.m_GPSLocate.m_LocationEx.GetGpsDate() == null || PubVar.m_GPSLocate.m_LocationEx.GetGpsDate().isEmpty() || PubVar.m_GPSLocate.m_LocationEx.GetGpsDate() == null || PubVar.m_GPSLocate.m_LocationEx.GetGpsTime().isEmpty()) {
                 try {
@@ -210,13 +240,13 @@ public class RoundActivity extends AppCompatActivity {
 
     }
 
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
+//    private void setupActionBar() {
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            // Show the Up button in the action bar.
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -531,7 +561,16 @@ public class RoundActivity extends AppCompatActivity {
             patrolPointEntity.setX(lastTrace.getX());
             patrolPointEntity.setY(lastTrace.getY());
             patrolPointEntity.setPointName("结束点");
-            patrolPointEntity.setSrid("2381");
+            String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+            if(name.equals("西安80坐标")){
+                patrolPointEntity.setSrid("2381");
+            }else if(name.equals("北京54坐标")){
+                patrolPointEntity.setSrid("2433");
+            }else if(name.equals("2000国家大地坐标系")){
+                patrolPointEntity.setSrid("4545");
+            }else if(name.equals("WGS-84坐标")){
+                patrolPointEntity.setSrid("4326");
+            }
             patrolPointEntity.setPointType("2");
             PatrolManager.getInstance().savePatrolPoint(patrolPointEntity);
 

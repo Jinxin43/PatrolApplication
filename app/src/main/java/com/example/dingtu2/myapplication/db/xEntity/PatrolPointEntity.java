@@ -24,9 +24,9 @@ public class PatrolPointEntity {
     @Column(name = "pointName")
     private String pointName;
     @Column(name = "X")
-    private double x;
+    private String x;
     @Column(name = "Y")
-    private double y;
+    private String y;
     private String srid;
     @Column(name = "height")
     private double height;
@@ -123,19 +123,19 @@ public class PatrolPointEntity {
         this.saveTime = saveTime;
     }
 
-    public double getX() {
-        return this.x;
+    public String getX() {
+        return x;
     }
 
-    public void setX(double x) {
+    public void setX(String x) {
         this.x = x;
     }
 
-    public double getY() {
-        return this.y;
+    public String getY() {
+        return y;
     }
 
-    public void setY(double y) {
+    public void setY(String y) {
         this.y = y;
     }
 

@@ -88,6 +88,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -281,8 +282,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         getFragmentManager().beginTransaction().replace(R.id.mMainContainer, mapFragment).commit();
-
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
@@ -514,15 +513,27 @@ public class MainActivity extends AppCompatActivity
                                 }
 
                                 Coordinate coord = StaticObject.soProjectSystem.WGS84ToXY(location.GetGpsLongitude(), location.GetGpsLatitude(), location.GetGpsAltitude());
-
-                                traceEntity.setSrid("2381");
+                                String name = StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                                if (name.equals("西安80坐标")) {
+                                    traceEntity.setSrid("2381");
+                                } else if (name.equals("北京54坐标")) {
+                                    traceEntity.setSrid("2433");
+                                } else if (name.equals("2000国家大地坐标系")) {
+                                    traceEntity.setSrid("4545");
+                                } else if (name.equals("WGS-84坐标")) {
+                                    traceEntity.setSrid("4326");
+                                }
                                 traceEntity.setGpsTime(traceEntity.getGpsTime());
                                 traceEntity.setUserID(AppSetting.curUserKey);
                                 traceEntity.setHeight(location.GetGpsAltitude());
-                                traceEntity.setLatitude(location.GetGpsLatitude());
-                                traceEntity.setLongitude(location.GetGpsLongitude());
-                                traceEntity.setX(coord.getX());
-                                traceEntity.setY(coord.getY());
+                                if (location.GetGpsLatitude() != 0 && location.GetGpsLatitude() != 0) {
+                                    traceEntity.setLatitude(location.GetGpsLatitude());
+                                    traceEntity.setLongitude(location.GetGpsLongitude());
+                                    NumberFormat nf = NumberFormat.getInstance();
+                                    nf.setGroupingUsed(false);
+                                    traceEntity.setX(nf.format(coord.getX()));
+                                    traceEntity.setY(nf.format(coord.getY()));
+                                }
                                 traceEntity.setUploadStatus(0);
                                 traceEntity.setSaveTime(new Date());
                                 traceEntity.setId(traceEntity.getGpsTime().getTime());
@@ -532,12 +543,24 @@ public class MainActivity extends AppCompatActivity
                                     patrolPointEntity.setUserID(AppSetting.curUser.getUserID());
                                     patrolPointEntity.setRoundID(AppSetting.curRound.getId());
                                     patrolPointEntity.setLatitude(location.GetGpsAltitude());
-                                    patrolPointEntity.setLongitude(location.GetGpsLongitude());
-                                    patrolPointEntity.setHeight(location.GetGpsAltitude());
+                                    if (location.GetGpsLongitude() != 0 && location.GetGpsAltitude() != 0) {
+                                        patrolPointEntity.setLongitude(location.GetGpsLongitude());
+                                        patrolPointEntity.setHeight(location.GetGpsAltitude());
+                                    }
                                     patrolPointEntity.setGpsTime(new Date());
-                                    patrolPointEntity.setX(coord.getX());
-                                    patrolPointEntity.setY(coord.getY());
-                                    patrolPointEntity.setSrid("2381");
+                                    NumberFormat nf = NumberFormat.getInstance();
+                                    nf.setGroupingUsed(false);
+                                    patrolPointEntity.setX(nf.format(coord.getX()));
+                                    patrolPointEntity.setY(nf.format(coord.getY()));
+                                    if (name.equals("西安80坐标")) {
+                                        patrolPointEntity.setSrid("2381");
+                                    } else if (name.equals("北京54坐标")) {
+                                        patrolPointEntity.setSrid("2433");
+                                    } else if (name.equals("2000国家大地坐标系")) {
+                                        patrolPointEntity.setSrid("4545");
+                                    } else if (name.equals("WGS-84坐标")) {
+                                        patrolPointEntity.setSrid("4326");
+                                    }
                                     patrolPointEntity.setPointType("0");
                                     AppSetting.curRound.setStartPoint(patrolPointEntity);
 
@@ -564,8 +587,10 @@ public class MainActivity extends AppCompatActivity
                                     HttpTraceModel httpTraceModel = new HttpTraceModel();
                                     httpTraceModel.setUserId(traceEntity.getUserID());
                                     httpTraceModel.setRoundId(AppSetting.curRound.getServerId());
-                                    httpTraceModel.setLatitude(traceEntity.getLatitude() + "");
-                                    httpTraceModel.setLongitude(traceEntity.getLongitude() + "");
+                                    if (traceEntity.getLatitude() != 0 && traceEntity.getLongitude() != 0) {
+                                        httpTraceModel.setLatitude(traceEntity.getLatitude() + "");
+                                        httpTraceModel.setLongitude(traceEntity.getLongitude() + "");
+                                    }
                                     httpTraceModel.setGpsTime(traceEntity.getGpsTime().getTime());
                                     httpTraceModel.setHeight(traceEntity.getHeight() + "");
                                     httpTraceModel.setX(traceEntity.getX());
@@ -607,7 +632,7 @@ public class MainActivity extends AppCompatActivity
                                 }
 
                             } catch (Exception ex) {
-                                Log.e("保存迹", ex.getMessage());
+                                Log.e("保存轨迹异常", ex.getMessage());
                             }
                         }
                     }).start();
@@ -1017,11 +1042,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.action_mapsettings) {
-            Intent mapSettingIntent = new Intent(this.getApplicationContext(), MapSettingActivity.class);
-            this.startActivity(mapSettingIntent);
-
-        }
+//        if (id == R.id.action_mapsettings) {
+//            Intent mapSettingIntent = new Intent(this.getApplicationContext(), MapSettingActivity.class);
+//            this.startActivity(mapSettingIntent);
+//
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -1226,9 +1251,20 @@ public class MainActivity extends AppCompatActivity
                         patrolPointEntity.setHeight(altitude);
                         patrolPointEntity.setGpsTime(new Date());
                         Coordinate coordinate = StaticObject.soProjectSystem.WGS84ToXY(longitude, latitude, altitude);
-                        patrolPointEntity.setX(coordinate.getX());
-                        patrolPointEntity.setY(coordinate.getY());
-                        patrolPointEntity.setSrid("2381");
+                        NumberFormat nf = NumberFormat.getInstance();
+                        nf.setGroupingUsed(false);
+                        patrolPointEntity.setX(nf.format(coordinate.getX()));
+                        patrolPointEntity.setY(nf.format(coordinate.getY()));
+                        String name = StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                        if (name.equals("西安80坐标")) {
+                            patrolPointEntity.setSrid("2381");
+                        } else if (name.equals("北京54坐标")) {
+                            patrolPointEntity.setSrid("2433");
+                        } else if (name.equals("2000国家大地坐标系")) {
+                            patrolPointEntity.setSrid("4545");
+                        } else if (name.equals("WGS-84坐标")) {
+                            patrolPointEntity.setSrid("4326");
+                        }
                         patrolPointEntity.setPointType("0");
                         roundEntity.setStartPoint(patrolPointEntity);
                     }
@@ -1315,8 +1351,8 @@ public class MainActivity extends AppCompatActivity
         addPointDialog.setView(layout);
         if (PubVar.m_GPSLocate != null && PubVar.m_GPSLocate.m_LocationEx != null && PubVar.m_GPSLocate.m_LocationEx.GetGpsFixMode() == lkGpsFixMode.en3DFix) {
             try {
-                ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.etPointLat)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLatitude() + "", 7));
+                ((TextView) layout.findViewById(R.id.etPointLon)).setText(Tools.ConvertToDigi(PubVar.m_GPSLocate.m_LocationEx.GetGpsLongitude() + "", 7));
                 ((TextView) layout.findViewById(R.id.etPointAlt)).setText(PubVar.m_GPSLocate.m_LocationEx.GetGpsAltitude() + "");
             } catch (Exception ex) {
 
@@ -1359,9 +1395,21 @@ public class MainActivity extends AppCompatActivity
                                 PubVar.m_GPSLocate.m_LocationEx.GetGpsAltitude());
 
                         pointEntity.setPointType("1");
-                        pointEntity.setSrid("2381");
-                        pointEntity.setX(coord.getX());
-                        pointEntity.setY(coord.getY());
+                        String name = StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                        if (name.equals("西安80坐标")) {
+                            pointEntity.setSrid("2381");
+                        } else if (name.equals("北京54坐标")) {
+                            pointEntity.setSrid("2433");
+                        } else if (name.equals("2000国家大地坐标系")) {
+                            pointEntity.setSrid("4545");
+                        } else if (name.equals("WGS-84坐标")) {
+                            pointEntity.setSrid("4326");
+                        }
+                        NumberFormat nf = NumberFormat.getInstance();
+                        nf.setGroupingUsed(false);
+                        pointEntity.setX(nf.format(coord.getX()));
+                        pointEntity.setY(nf.format(coord.getY()));
+
                         pointEntity.setRoundID(AppSetting.curRound.getId());
                         //TODO:
 //                       pointEntity.setUserID(AppSetting.curUser.getUserID());

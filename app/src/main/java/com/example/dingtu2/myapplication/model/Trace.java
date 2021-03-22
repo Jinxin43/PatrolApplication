@@ -43,13 +43,13 @@ public interface Trace {
 
     void setUploadStatus(int status);
 
-    double getX();
+    String getX();
 
-    void setX(double x);
+    void setX(String x);
 
-    double getY();
+    String getY();
 
-    void setY(double y);
+    void setY(String y);
 
     String getSrid();
 

@@ -1,5 +1,6 @@
 package com.DingTu.GPS;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -91,6 +92,7 @@ public class GPSLocate {
 
     //打开GPS，开始时行接收数据，注意此时的GPS设备要处于打开状态
     public boolean GPS_OpenClose = false;   //GPS的开关状态，true-开，close-关
+    @SuppressLint("MissingPermission")
     public boolean OpenGPS()
     {
         //获取位置管理服务
@@ -253,6 +255,7 @@ public class GPSLocate {
     private boolean m_Sound_Fix = false;
     private GpsStatus.Listener m_GpsStatusListener = new GpsStatus.Listener() {
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onGpsStatusChanged(int event)
         {

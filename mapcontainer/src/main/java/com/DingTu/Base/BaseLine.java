@@ -69,9 +69,11 @@ public class BaseLine implements IOnPaint {
             Paint pBrush = new Paint();
             pBrush.setStrokeWidth(Tools.DPToPix(5));
             if (i == 0) pBrush.setColor(Color.GREEN);  //起
+            canvas.drawCircle(PList[0].x, PList[0].y, H / 2, pBrush);
             if (i == PList.length - 1) pBrush.setColor(Color.YELLOW);  //终
-            if (i > 0 && i < PList.length - 1) pBrush.setColor(Color.RED);
-            canvas.drawCircle(PList[i].x, PList[i].y, H / 2, pBrush);
+            canvas.drawCircle(PList[PList.length - 1].x, PList[PList.length - 1].y, H / 2, pBrush);
+            //if (i > 0 && i < PList.length - 1) pBrush.setColor(Color.RED);
+//            canvas.drawCircle(PList[i].x, PList[i].y, H / 2, pBrush);
             pBrush.setStyle(Paint.Style.STROKE);
             pBrush.setColor(Color.BLUE);
             pBrush.setStrokeWidth(Tools.DPToPix(2));
@@ -80,7 +82,6 @@ public class BaseLine implements IOnPaint {
             if (i == 0) p.moveTo(PList[i].x, PList[i].y);
             else p.lineTo(PList[i].x, PList[i].y);
         }
-
         Paint pPen = new Paint();
         pPen.setStrokeWidth(Tools.DPToPix(3));
         pPen.setColor(Color.BLUE);

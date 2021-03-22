@@ -100,7 +100,7 @@ public class MapSettingActivity extends AppCompatActivity {
         int index = -1;
         for (String coordType : arrCoordinaType) {
             index++;
-            if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem() != null) {
+            if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer() != null) {
                 if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetName().equals(coordType)) {
                     break;
                 }
@@ -131,9 +131,11 @@ public class MapSettingActivity extends AppCompatActivity {
         int centralIndex = -1;
         for (String centralMeida : arrCentralType) {
             centralIndex++;
-            float currentCentral = PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetCenterMeridian();
-            if (Float.parseFloat(centralMeida) == currentCentral) {
-                break;
+            if (PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer() != null) {
+                float currentCentral = PubVar.m_DoEvent.m_ProjectDB.GetProjectExplorer().GetCoorSystem().GetCenterMeridian();
+                if (Float.parseFloat(centralMeida) == currentCentral) {
+                    break;
+                }
             }
         }
         spCentralMeridian.setSelection(centralIndex);
@@ -179,8 +181,8 @@ public class MapSettingActivity extends AppCompatActivity {
         if (kind == lkMapFileType.enGrid) {
             mSelectCoor = spCoordinateType.getSelectedItem().toString();
             mSelectCenter = spCentralMeridian.getSelectedItem().toString();
-            this.m_GridMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetGridLayerExplorer().GetBKFileList();
             if (this.m_GridMapFileList != null && this.m_GridMapFileList.size() > 0) {
+                this.m_GridMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetGridLayerExplorer().GetBKFileList();
                 String gridFileNames = "";
                 for (HashMap<String, Object> hashMap : m_GridMapFileList) {
                     String coor = hashMap.get("CoorSystem").toString();
@@ -203,8 +205,8 @@ public class MapSettingActivity extends AppCompatActivity {
         if (kind == lkMapFileType.enVector) {
             mSelectCoor = spCoordinateType.getSelectedItem().toString();
             mSelectCenter = spCentralMeridian.getSelectedItem().toString();
-            this.m_VetorMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetVectorLayerExplorer().GetBKFileList();
             if (this.m_VetorMapFileList != null && this.m_VetorMapFileList.size() > 0) {
+                this.m_VetorMapFileList = PubVar.m_DoEvent.m_ProjectDB.GetBKLayerExplorer().GetVectorLayerExplorer().GetBKFileList();
                 String gridFileNames = "";
                 for (HashMap<String, Object> hashMap : m_VetorMapFileList) {
                     String coor = hashMap.get("CoorSystem").toString();

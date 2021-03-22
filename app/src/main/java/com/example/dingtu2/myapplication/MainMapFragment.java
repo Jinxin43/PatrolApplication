@@ -74,6 +74,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ public class MainMapFragment extends Fragment {
     private int[] pointButtons = new int[]{R.id.bt_point_draw, R.id.bt_point_coor, R.id.bt_point_gps};
 
     private int[] m_SelectToolsBarItemIdList = {R.id.bt_poly_drawline, R.id.bt_poly_gps, R.id.bt_line_drawline, R.id.bt_line_gps,
-            R.id.bt_point_draw, R.id.bt_point_gps, R.id.btnSelectDraw, R.id.btnStartRound};
+            R.id.bt_point_draw, R.id.bt_point_gps, R.id.btnSelectDraw, R.id.btnStartRound,R.id.btnFullScreen};
 
     private List<PointBean> mListPoints;
     private final int MSG_SUCCESS_FLAG = 1;
@@ -249,7 +250,6 @@ public class MainMapFragment extends Fragment {
         return myView;
     }
 
-
     private void getDataPointDraw(String mParam1) {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -370,6 +370,13 @@ public class MainMapFragment extends Fragment {
                     }
                     if (Str.equals("工作目录")) {
                         SystemSetup.CheckSystemFile(PubVar.m_DoEvent.m_Context);
+                        HashMap<String, String> resultHM = SystemSetup.CheckSystemFile(getActivity());
+                        if ((resultHM.get("Result").equals("OK"))) {
+                            PubVar.m_SysAbsolutePath = resultHM.get("Path");
+                            AppSetting.photoPath = PubVar.m_SysAbsolutePath + "/Photo";
+                            AppSetting.smallPhotoPath = AppSetting.photoPath + "/samllPhoto";
+                            openProject();
+                        }
                     }
                 }
             });
@@ -518,15 +525,16 @@ public class MainMapFragment extends Fragment {
                         if (traces != null) {
                             Log.d("TraceCount", traces.size() + "");
                             for (TraceEntity trace : traces) {
-
-                                LocationEx location = new LocationEx();
-                                Log.d("trace", "lon:" + trace.getLongitude() + " lat:" + trace.getLatitude());
-                                location.SetGpsLongitude(trace.getLongitude());
-                                location.SetGpsLatitude(trace.getLatitude());
-                                location.SetGpsAltitude(trace.getHeight());
-                                location.SetGpsDate(dateFormat.format(trace.getGpsTime()));
-                                location.SetGpsTime(timeFormat.format(trace.getGpsTime()));
-                                PubVar.m_DoEvent.mRoundLinePresenter.UpdateGpsPosition(location, false);
+                                if(trace.getLatitude()!=0&&trace.getLongitude()!=0) {
+                                    LocationEx location = new LocationEx();
+                                    Log.d("trace", "lon:" + trace.getLongitude() + " lat:" + trace.getLatitude());
+                                    location.SetGpsLongitude(trace.getLongitude());
+                                    location.SetGpsLatitude(trace.getLatitude());
+                                    location.SetGpsAltitude(trace.getHeight());
+                                    location.SetGpsDate(dateFormat.format(trace.getGpsTime()));
+                                    location.SetGpsTime(timeFormat.format(trace.getGpsTime()));
+                                    PubVar.m_DoEvent.mRoundLinePresenter.UpdateGpsPosition(location, false);
+                                }
 
 
                             }
@@ -918,9 +926,20 @@ public class MainMapFragment extends Fragment {
                             patrolPointEntity.setGpsTime(new Date());
                             Log.e("起始点", "Log:" + longitude + "Lat:" + latitude + "alt:" + altitude);
                             Coordinate coordinate = StaticObject.soProjectSystem.WGS84ToXY(longitude, latitude, altitude);
-                            patrolPointEntity.setX(coordinate.getX());
-                            patrolPointEntity.setY(coordinate.getY());
-                            patrolPointEntity.setSrid("2381");
+                            NumberFormat nf = NumberFormat.getInstance();
+                            nf.setGroupingUsed(false);
+                            patrolPointEntity.setX(nf.format(coordinate.getX()));
+                            patrolPointEntity.setY(nf.format(coordinate.getY()));
+                            String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                            if(name.equals("西安80坐标")){
+                                patrolPointEntity.setSrid("2381");
+                            }else if(name.equals("北京54坐标")){
+                                patrolPointEntity.setSrid("2433");
+                            }else if(name.equals("2000国家大地坐标系")){
+                                patrolPointEntity.setSrid("4545");
+                            }else if(name.equals("WGS-84坐标")){
+                                patrolPointEntity.setSrid("4326");
+                            }
                             patrolPointEntity.setPointType("0");
                             roundEntity.setStartPoint(patrolPointEntity);
                             PatrolManager.getInstance().savePatrolPoint(patrolPointEntity);
@@ -1011,12 +1030,25 @@ public class MainMapFragment extends Fragment {
                                 final Coordinate coord = StaticObject.soProjectSystem.WGS84ToXY(location.GetGpsLongitude(), location.GetGpsLatitude(), location.GetGpsAltitude());
 
                                 traceEntity.setUserID(AppSetting.curUserKey);
-                                traceEntity.setHeight(location.GetGpsAltitude());
-                                traceEntity.setLatitude(location.GetGpsLatitude());
-                                traceEntity.setLongitude(location.GetGpsLongitude());
-                                traceEntity.setX(coord.getX());
-                                traceEntity.setY(coord.getY());
-                                traceEntity.setSrid("2381");
+                                if(location.GetGpsLatitude()>0&&location.GetGpsLongitude()>0) {
+                                    traceEntity.setHeight(location.GetGpsAltitude());
+                                    traceEntity.setLatitude(location.GetGpsLatitude());
+                                    traceEntity.setLongitude(location.GetGpsLongitude());
+                                    NumberFormat nf = NumberFormat.getInstance();
+                                    nf.setGroupingUsed(false);
+                                    traceEntity.setX(nf.format(coord.getX()));
+                                    traceEntity.setY(nf.format(coord.getY()));
+                                }
+                                String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                                if(name.equals("西安80坐标")){
+                                    traceEntity.setSrid("2381");
+                                }else if(name.equals("北京54坐标")){
+                                    traceEntity.setSrid("2433");
+                                }else if(name.equals("2000国家大地坐标系")){
+                                    traceEntity.setSrid("4545");
+                                }else if(name.equals("WGS-84坐标")){
+                                    traceEntity.setSrid("4326");
+                                }
                                 traceEntity.setUploadStatus(0);
                                 traceEntity.setSaveTime(new Date());
 
@@ -1149,10 +1181,21 @@ public class MainMapFragment extends Fragment {
         Coordinate coordinate = StaticObject.soProjectSystem.WGS84ToXY(locationEx.GetGpsLongitude(),
                 locationEx.GetGpsLatitude(),
                 locationEx.GetGpsAltitude());
-        patrolPointEntity.setX(coordinate.getX());
-        patrolPointEntity.setY(coordinate.getY());
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setGroupingUsed(false);
+        patrolPointEntity.setX(nf.format(coordinate.getX()));
+        patrolPointEntity.setY(nf.format(coordinate.getY()));
 //            TODO:auto get srid;
-        patrolPointEntity.setSrid("2381");
+        String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+        if(name.equals("西安80坐标")){
+            patrolPointEntity.setSrid("2381");
+        }else if(name.equals("北京54坐标")){
+            patrolPointEntity.setSrid("2433");
+        }else if(name.equals("2000国家大地坐标系")){
+            patrolPointEntity.setSrid("4545");
+        }else if(name.equals("WGS-84坐标")){
+            patrolPointEntity.setSrid("4326");
+        }
         patrolPointEntity.setPointType("0");
         patrolPointEntity.setPointName("起始点");
 
@@ -1244,9 +1287,20 @@ public class MainMapFragment extends Fragment {
                                 PubVar.m_GPSLocate.m_LocationEx.GetGpsAltitude());
 
                         pointEntity.setPointType("1");
-                        pointEntity.setSrid("2381");
-                        pointEntity.setX(coord.getX());
-                        pointEntity.setY(coord.getY());
+                        String name=StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                        if(name.equals("西安80坐标")){
+                            pointEntity.setSrid("2381");
+                        }else if(name.equals("北京54坐标")){
+                            pointEntity.setSrid("2433");
+                        }else if(name.equals("2000国家大地坐标系")){
+                            pointEntity.setSrid("4545");
+                        }else if(name.equals("WGS-84坐标")){
+                            pointEntity.setSrid("4326");
+                        }
+                        NumberFormat nf = NumberFormat.getInstance();
+                        nf.setGroupingUsed(false);
+                        pointEntity.setX(nf.format(coord.getX()));
+                        pointEntity.setY(nf.format(coord.getY()));
                         pointEntity.setRoundID(AppSetting.curRound.getId());
                         //TODO:
 //                       pointEntity.setUserID(AppSetting.curUser.getUserID());

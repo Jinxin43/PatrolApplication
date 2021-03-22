@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -133,11 +134,13 @@ public class UploadMananger {
                 HttpPatrolPointModel httpPointModel = new HttpPatrolPointModel();
                 httpPointModel.setPatrolId(patrolServerId);
                 httpPointModel.setGpsTime(pointEntity.getGpsTime().getTime());
-                httpPointModel.setHeight(pointEntity.getHeight() + "");
-                httpPointModel.setLatitude(pointEntity.getLatitude() + "");
-                httpPointModel.setLongitude(pointEntity.getLongitude() + "");
-                httpPointModel.setX(pointEntity.getX());
-                httpPointModel.setY(pointEntity.getY());
+                if(pointEntity.getLatitude()>0&&pointEntity.getLatitude()>0) {
+                    httpPointModel.setHeight(pointEntity.getHeight() + "");
+                    httpPointModel.setLatitude(pointEntity.getLatitude() + "");
+                    httpPointModel.setLongitude(pointEntity.getLongitude() + "");
+                    httpPointModel.setX(pointEntity.getX());
+                    httpPointModel.setY(pointEntity.getY());
+                }
                 httpPointModel.setSrid(pointEntity.getSrid());
                 httpPointModel.setType(pointEntity.getPointType());
 
@@ -184,8 +187,10 @@ public class UploadMananger {
         HttpTraceModel httpTraceModel = new HttpTraceModel();
         httpTraceModel.setUserId(traceEntity.getUserID());
         httpTraceModel.setRoundId(traceEntity.getServerRoundId());
-        httpTraceModel.setLatitude(traceEntity.getLatitude() + "");
-        httpTraceModel.setLongitude(traceEntity.getLongitude() + "");
+        if(traceEntity.getLatitude()>0&&traceEntity.getLongitude()>0) {
+            httpTraceModel.setLatitude(traceEntity.getLatitude() + "");
+            httpTraceModel.setLongitude(traceEntity.getLongitude() + "");
+        }
         httpTraceModel.setGpsTime(traceEntity.getGpsTime().getTime());
         httpTraceModel.setHeight(traceEntity.getHeight() + "");
         httpTraceModel.setX(traceEntity.getX());

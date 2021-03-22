@@ -36,34 +36,38 @@ public class ParameterSettingActivity extends AppCompatActivity {
     }
 
     private void getParameter() {
-        String SQL = "Select * from T_Project where Id=2";
-        SQLiteDataReader DR = PubVar.m_DoEvent.m_ProjectDB.GetSQLiteDatabase().Query(SQL);
-        if (DR.Read()) {
-            if (DR.GetString("P41") != null && !DR.GetString("P41").isEmpty()) {
-                oldDelX = Double.parseDouble(DR.GetString("P41"));
-            } else {
-                oldDelX = 0d;
+        try {
+            String SQL = "Select * from T_Project where Id=2";
+            SQLiteDataReader DR = PubVar.m_DoEvent.m_ProjectDB.GetSQLiteDatabase().Query(SQL);
+            if (DR.Read()) {
+                if (DR.GetString("P41") != null && !DR.GetString("P41").isEmpty()) {
+                    oldDelX = Double.parseDouble(DR.GetString("P41"));
+                } else {
+                    oldDelX = 0d;
+                }
+
+                if (DR.GetString("P42") != null && !DR.GetString("P42").isEmpty()) {
+                    oldDelY = Double.parseDouble(DR.GetString("P42"));
+                }
+
+                if (DR.GetString("P43") != null && !DR.GetString("P43").isEmpty()) {
+                    oldRoute = Double.parseDouble(DR.GetString("P43"));
+                }
+
+                if (DR.GetString("P44") != null && !DR.GetString("P44").isEmpty()) {
+                    oldScale = Double.parseDouble(DR.GetString("P44"));
+                } else {
+                    oldScale = 1.0d;
+                }
             }
 
-            if (DR.GetString("P42") != null && !DR.GetString("P42").isEmpty()) {
-                oldDelY = Double.parseDouble(DR.GetString("P42"));
-            }
-
-            if (DR.GetString("P43") != null && !DR.GetString("P43").isEmpty()) {
-                oldRoute = Double.parseDouble(DR.GetString("P43"));
-            }
-
-            if (DR.GetString("P44") != null && !DR.GetString("P44").isEmpty()) {
-                oldScale = Double.parseDouble(DR.GetString("P44"));
-            } else {
-                oldScale = 1.0d;
-            }
+            Tools.SetTextViewValueOnID(this, R.id.et_DelX, oldDelX + "");
+            Tools.SetTextViewValueOnID(this, R.id.et_DelY, oldDelY + "");
+            Tools.SetTextViewValueOnID(this, R.id.et_Rotate, oldRoute + "");
+            Tools.SetTextViewValueOnID(this, R.id.et_Scale, 1 / oldScale + "");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        Tools.SetTextViewValueOnID(this, R.id.et_DelX, oldDelX + "");
-        Tools.SetTextViewValueOnID(this, R.id.et_DelY, oldDelY + "");
-        Tools.SetTextViewValueOnID(this, R.id.et_Rotate, oldRoute + "");
-        Tools.SetTextViewValueOnID(this, R.id.et_Scale, 1 / oldScale + "");
     }
 
     private void saveParameter() {

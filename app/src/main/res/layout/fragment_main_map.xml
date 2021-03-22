@@ -175,7 +175,7 @@
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableTop="@drawable/icon_d_full"
+                android:drawableTop="@drawable/icon_d_move"
                 android:textColor="#dbeedc"
                 android:textSize="10dp"
                 android:background="@drawable/button_green"
@@ -366,7 +366,7 @@
                             android:id="@+id/status_status"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="巡护中,2小时21分钟,11.4公里"
+                            android:text="未开始巡护"
                             android:textColor="#FFFFFF"/>
                     </LinearLayout>
                     <LinearLayout

@@ -23,4 +23,6 @@
     <color name="text_bg_color">#66ff00</color>
 
     <color name="grid_view_item_bg">#AEAEAE</color>
+    <color name="colorGrayContact_letter">#EDEDED</color>
+    <color name="colorBlackgray">#333333</color>
 </resources>

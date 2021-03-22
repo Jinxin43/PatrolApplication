@@ -23,8 +23,8 @@ public class TraceEntity implements Trace {
     private double latitude;
     private double longitude;
     private double height;
-    private double x;
-    private double y;
+    private String x;
+    private String y;
     private Date gpsTime;
     private Date saveTime;
     private int uploadStatus = 0;
@@ -134,19 +134,23 @@ public class TraceEntity implements Trace {
         this.saveTime = saveTime;
     }
 
-    public double getX() {
-        return this.x;
+    @Override
+    public String getX() {
+        return x;
     }
 
-    public void setX(double x) {
+    @Override
+    public void setX(String x) {
         this.x = x;
     }
 
-    public double getY() {
-        return this.y;
+    @Override
+    public String getY() {
+        return y;
     }
 
-    public void setY(double y) {
+    @Override
+    public void setY(String y) {
         this.y = y;
     }
 

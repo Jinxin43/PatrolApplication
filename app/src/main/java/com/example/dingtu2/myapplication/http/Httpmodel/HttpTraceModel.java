@@ -12,8 +12,8 @@ public class HttpTraceModel {
     private String longitude;
     private String height;
     private long gpsTime;
-    private double x;
-    private double y;
+    private String x;
+    private String y;
     private String srid;
 
     public String getUserId() {
@@ -64,19 +64,19 @@ public class HttpTraceModel {
         this.gpsTime = gpsTime;
     }
 
-    public double getX() {
-        return this.x;
+    public String getX() {
+        return x;
     }
 
-    public void setX(double x) {
+    public void setX(String x) {
         this.x = x;
     }
 
-    public double getY() {
-        return this.y;
+    public String getY() {
+        return y;
     }
 
-    public void setY(double y) {
+    public void setY(String y) {
         this.y = y;
     }
 

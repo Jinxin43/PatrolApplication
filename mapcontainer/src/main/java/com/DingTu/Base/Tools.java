@@ -998,8 +998,8 @@ public static String ListToJSONStr(List<String> StrList)
     {
         if (IfConvert)
         {
-            if (StaticObject.soProjectSystem.GetCoorSystem().GetName().equals("WGS-84坐标"))
-            {
+//            if (StaticObject.soProjectSystem.GetCoorSystem().GetName().equals("WGS-84坐标"))
+//            {
                 Coordinate Coor1 = StaticObject.soProjectSystem.XYToWGS84(x1, y1, 0);
                 Coordinate Coor2 = StaticObject.soProjectSystem.XYToWGS84(x2, y2, 0);
                 StaticObject.soProjectSystem.GetCoorSystem().SetCenterMeridian(ProjectSystem.AutoCalCenterJX(Coor1.getX(),Coor1.getY()));
@@ -1019,7 +1019,7 @@ public static String ListToJSONStr(List<String> StrList)
                 y1 = Coor1.getY();
                 x2=Coor2.getX();
                 y2=Coor2.getY();
-            }
+//            }
         }
         return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }

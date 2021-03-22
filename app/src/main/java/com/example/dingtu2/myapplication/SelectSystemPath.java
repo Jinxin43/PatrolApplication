@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.DingTu.Base.ICallback;
@@ -95,8 +96,7 @@ public class SelectSystemPath {
         ab.setIcon(R.drawable.messageinfo);
         ab.setView(this.m_View);
         ab.setCancelable(false);
-
-        ((Button) this.m_View.findViewById(R.id.btquit)).setOnClickListener(new View.OnClickListener() {
+        ((RelativeLayout) this.m_View.findViewById(R.id.btquit)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (m_Callback != null) m_Callback.OnClick("退出", "");

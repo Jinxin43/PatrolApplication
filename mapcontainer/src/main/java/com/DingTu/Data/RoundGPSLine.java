@@ -181,7 +181,7 @@ public class RoundGPSLine implements IOnTouchCommand,IOnPaint {
     {
         if (this.m_DataCollectStatus == lkGpsReceiveDataStatus.enStop)
         {
-            Tools.ShowToast(PubVar.m_DoEvent.m_Context, Tools.ToLocale("当前没有正在采集的实体！"));
+//            Tools.ShowToast(PubVar.m_DoEvent.m_Context, Tools.ToLocale("当前没有正在采集的实体！"));
             return;
         }
         this.m_DataCollectStatus = lkGpsReceiveDataStatus.enStop;
@@ -412,7 +412,7 @@ public class RoundGPSLine implements IOnTouchCommand,IOnPaint {
                     MinDistance = Tools.GetTwoPointDistance(coord, PT);
 
 //                MinDistance = Tools.GetTwoPointDistance(PT.getX(), PT.getY(), coord.getX(), coord.getY(), false);
-                    double LimitDistance = 10;
+                    double LimitDistance = 100;
 //            if (!(PubVar.m_HashMap.GetValueObject("Tag_System_GPS_MinDistance").Value+"").equals("不限"))
 //            {
 //                LimitDistance = Double.parseDouble(PubVar.m_HashMap.GetValueObject("Tag_System_GPS_MinDistance").Value+"");

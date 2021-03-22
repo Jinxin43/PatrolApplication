@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.DingTu.Base.ICallback;
+import com.DingTu.Map.StaticObject;
 import com.example.dingtu2.myapplication.AppSetting;
 import com.example.dingtu2.myapplication.db.xEntity.PatrolEntity;
 import com.example.dingtu2.myapplication.db.xEntity.PatrolEventEntity;
@@ -106,14 +107,25 @@ public class ReuploadManager {
             eventModel.setUserId(AppSetting.curUserKey);
             eventModel.setDescription(eventEntity.getEventDescription());
             eventModel.setRoundId(serverPatrolID);
-
             eventModel.setEventTime(eventEntity.getEventTime().getTime());
-            eventModel.setLatitude(eventEntity.getEventLat() + "");
-            eventModel.setLongitude(eventEntity.getEventLon() + "");
+            if(eventEntity.getEventLat()>0&&eventEntity.getEventLon()>0) {
+                eventModel.setLatitude(eventEntity.getEventLat() + "");
+                eventModel.setLongitude(eventEntity.getEventLon() + "");
+            }
             eventModel.setEventPOI(eventEntity.getEventPOI());
             eventModel.setHeight(eventEntity.getAltitude() + "");
             eventModel.setType(eventEntity.getEventType() + "");
             eventModel.setGpsTime(eventEntity.getEventTime().getTime());
+            String name= StaticObject.soProjectSystem.GetCoorSystem().GetName();
+            if(name.equals("西安80坐标")){
+                eventModel.setSrid("2381");
+            }else if(name.equals("北京54坐标")){
+                eventModel.setSrid("2433");
+            }else if(name.equals("2000国家大地坐标系")){
+                eventModel.setSrid("4545");
+            }else if(name.equals("WGS-84坐标")){
+                eventModel.setSrid("4326");
+            }
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             RetrofitHttp.getRetrofit(builder.build()).CreateEvent("CreateEvent", eventModel).enqueue(new Callback<ResponseBody>() {

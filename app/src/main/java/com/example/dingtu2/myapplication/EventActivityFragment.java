@@ -39,6 +39,7 @@ import com.DingTu.Base.PubVar;
 import com.DingTu.Base.Tools;
 import com.DingTu.Enum.lkGpsFixMode;
 import com.DingTu.GPS.LocationEx;
+import com.DingTu.Map.StaticObject;
 import com.example.dingtu2.myapplication.db.xEntity.PatrolEventEntity;
 import com.example.dingtu2.myapplication.db.xEntity.PhotoEntity;
 import com.example.dingtu2.myapplication.http.Httpmodel.HttpEventModel;
@@ -339,13 +340,24 @@ public class EventActivityFragment extends Fragment {
                             eventModel.setRoundId(AppSetting.curRound.getServerId());
                         }
                         eventModel.setEventTime(roundEventEntity.getEventTime().getTime());
-                        eventModel.setLatitude(roundEventEntity.getEventLat() + "");
-                        eventModel.setLongitude(roundEventEntity.getEventLon() + "");
+                        if(roundEventEntity.getEventLat()>0&&roundEventEntity.getEventLon()>0) {
+                            eventModel.setLatitude(roundEventEntity.getEventLat() + "");
+                            eventModel.setLongitude(roundEventEntity.getEventLon() + "");
+                        }
                         eventModel.setEventPOI(roundEventEntity.getEventPOI());
                         eventModel.setHeight(roundEventEntity.getAltitude() + "");
                         eventModel.setType(roundEventEntity.getEventType() + "");
                         eventModel.setGpsTime(roundEventEntity.getEventTime().getTime());
-
+                        String name= StaticObject.soProjectSystem.GetCoorSystem().GetName();
+                        if(name.equals("西安80坐标")){
+                            eventModel.setSrid("2381");
+                        }else if(name.equals("北京54坐标")){
+                            eventModel.setSrid("2433");
+                        }else if(name.equals("2000国家大地坐标系")){
+                            eventModel.setSrid("4545");
+                        }else if(name.equals("WGS-84坐标")){
+                            eventModel.setSrid("4326");
+                        }
                         OkHttpClient.Builder builder = new OkHttpClient.Builder();
                         prompt(RetrofitHttp.getRetrofit(builder.build()).CreateEvent("CreateEvent", eventModel));
                     }

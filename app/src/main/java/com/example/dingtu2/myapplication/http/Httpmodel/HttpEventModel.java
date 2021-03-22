@@ -17,6 +17,7 @@ public class HttpEventModel {
     private String userId;
     private String type;
     private String height;
+    private String srid;
 
 
     public String getRoundId() {
@@ -107,5 +108,11 @@ public class HttpEventModel {
         this.height = height;
     }
 
+    public String getSrid() {
+        return srid;
+    }
 
+    public void setSrid(String srid) {
+        this.srid = srid;
+    }
 }
