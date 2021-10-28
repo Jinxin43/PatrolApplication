@@ -2,6 +2,7 @@ package com.example.dingtu2.myapplication;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,14 +79,15 @@ public class SystemPathAdapter extends BaseAdapter {
             v.setTag(obj);
             //分情况赋值
             String VType = v.getClass().getName();
-            if (VType.equals("android.support.v7.widget.AppCompatTextView")) {
+            Log.d("TAG",VType+"----");
+            if (VType.equals("androidx.appcompat.widget.AppCompatTextView")) {
                 TextView tv = (TextView) v;
                 if (obj.get(this.m_ObjField[i]) != null) {
                     tv.setText(obj.get(this.m_ObjField[i]).toString());
                 }
 
             }
-            if (VType.equals("android.widget.CheckBox")) {
+            if (VType.equals("androidx.appcompat.widget.CheckBox")) {
 
                 CheckBox cb = (CheckBox) v;
                 cb.setTag(position + "," + i);
@@ -98,7 +100,7 @@ public class SystemPathAdapter extends BaseAdapter {
                 });
                 cb.setChecked(Boolean.parseBoolean(obj.get(this.m_ObjField[i]).toString()));
             }
-            if (VType.equals("android.widget.ImageButton")) {
+            if (VType.equals("androidx.appcompat.widget.ImageButton")) {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

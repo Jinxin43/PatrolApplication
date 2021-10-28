@@ -3,7 +3,6 @@ package com.example.dingtu2.myapplication.Login;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
-import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +31,8 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.lifecycle.MutableLiveData;
 
 import com.DingTu.Base.ICallback;
 import com.DingTu.Base.PubVar;

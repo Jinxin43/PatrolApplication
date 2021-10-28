@@ -7,14 +7,13 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.support.v4.app.Fragment;
 
 import com.DingTu.Base.PubVar;
 import com.example.dingtu2.myapplication.utils.UpdateManager;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link } subclass.
  */
 public class SettingFragment extends PreferenceFragment {
 

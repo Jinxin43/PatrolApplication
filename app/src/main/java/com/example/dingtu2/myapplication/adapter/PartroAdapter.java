@@ -3,13 +3,14 @@ package com.example.dingtu2.myapplication.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dingtu2.myapplication.MainActivity;
 import com.example.dingtu2.myapplication.R;
@@ -21,7 +22,7 @@ import java.util.List;
 public class PartroAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private final Context mContext;
     private String mType;
-    public   ContentLoadingProgressBar contentLoadingProgressBar;
+    public ContentLoadingProgressBar contentLoadingProgressBar;
     private List<ResultRouteBean> mData;
     private final static int TYPE_CONTENT=0;//正常内容
     private final static int TYPE_FOOTER=1;//加载View

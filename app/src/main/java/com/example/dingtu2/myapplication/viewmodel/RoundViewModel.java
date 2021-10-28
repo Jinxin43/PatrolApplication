@@ -1,11 +1,12 @@
 package com.example.dingtu2.myapplication.viewmodel;
 
 import android.app.Application;
-import android.arch.core.util.Function;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
+
+import androidx.arch.core.util.Function;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.example.dingtu2.myapplication.db.DatabaseCreator;
 import com.example.dingtu2.myapplication.db.entity.RoundEntity;

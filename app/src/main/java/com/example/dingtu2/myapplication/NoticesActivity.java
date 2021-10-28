@@ -1,9 +1,10 @@
 package com.example.dingtu2.myapplication;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class NoticesActivity extends AppCompatActivity {
 

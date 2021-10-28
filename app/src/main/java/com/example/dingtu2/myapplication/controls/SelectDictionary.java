@@ -344,12 +344,12 @@ public class SelectDictionary {
                 String VType = v.getClass().getName();
                 Log.d("ViewType", VType);
                 //if (VType.equals("android.widget.TextView"))
-                if (VType.equals("android.support.v7.widget.AppCompatTextView")) {
+                if (VType.equals("androidx.appcompat.widget.AppCompatTextView")) {
                     TextView tv = (TextView) v;
                     tv.setText(obj.get(this.m_ObjField[i]).toString());
                 }
                 //if (VType.equals("android.widget.CheckBox"))
-                if (VType.equals("android.support.v7.widget.AppCompatCheckBox")) {
+                if (VType.equals("androidx.appcompat.widget.AppCompatCheckBox")) {
                     CheckBox cb = (CheckBox) v;
                     cb.setTag(position + "," + i);
                     cb.setOnClickListener(new View.OnClickListener() {
@@ -365,7 +365,7 @@ public class SelectDictionary {
                 }
 
                 //if (VType.equals("android.widget.RadioButton"))
-                if (VType.equals("android.support.v7.widget.AppCompatRadioButton")) {
+                if (VType.equals("androidx.appcompat.widget.AppCompatRadioButton")) {
                     RadioButton rb = (RadioButton) v;
                     rb.setTag(position + "," + i);
 
@@ -395,7 +395,7 @@ public class SelectDictionary {
                 }
 
 //                if (VType.equals("android.widget.ImageView"))
-                if (VType.equals("android.support.v7.widget.AppCompatImageView")) {
+                if (VType.equals("androidx.appcompat.widget.AppCompatImageView")) {
                     ImageView iv = (ImageView) v;
                     if (i < this.m_ObjField.length) {
                         if (obj.get(this.m_ObjField[i]) != null)

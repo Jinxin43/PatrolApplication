@@ -10,7 +10,7 @@
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:layout_marginTop="40dp">
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="#98618F88"
@@ -83,7 +83,7 @@
                         android:textColor="#FFFFFF"/>
                 </LinearLayout>
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
         <com.example.dingtu2.myapplication.controls.DTGridView
             android:id="@+id/mainmenu_gridview"
             android:layout_width="match_parent"

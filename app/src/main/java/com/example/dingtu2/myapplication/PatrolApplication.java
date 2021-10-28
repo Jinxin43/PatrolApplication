@@ -1,7 +1,8 @@
 package com.example.dingtu2.myapplication;
 
 import android.app.Application;
-import android.support.multidex.MultiDex;
+
+import androidx.multidex.MultiDex;
 
 import com.example.dingtu2.myapplication.utils.CrashCatchHandler;
 

@@ -1,7 +1,6 @@
 package com.example.dingtu2.myapplication;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.DingTu.Base.ICallback;
 import com.DingTu.Base.PubVar;

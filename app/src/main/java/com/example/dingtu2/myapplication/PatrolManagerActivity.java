@@ -1,15 +1,17 @@
 package com.example.dingtu2.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.dingtu2.myapplication.View.RecyclerViewSpacesItemDecoration;
 import com.example.dingtu2.myapplication.adapter.PatroManagerAdapter;
@@ -50,6 +52,7 @@ public class PatrolManagerActivity extends AppCompatActivity {
         setupActionBar();
         initView();
     }
+    @SuppressLint("WrongConstant")
     private void initView() {
         mRouteBean = new ArrayList<>();
         mRecyView = (RecyclerView) findViewById(R.id.list);

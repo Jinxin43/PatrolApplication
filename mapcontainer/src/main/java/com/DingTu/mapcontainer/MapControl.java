@@ -3,12 +3,13 @@ package com.DingTu.mapcontainer;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.DingTu.Base.PubVar;
 import com.DingTu.Cargeometry.Size;

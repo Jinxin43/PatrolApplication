@@ -292,7 +292,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"/>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="66dp"
             android:layout_toRightOf="@+id/iv_scalebar"
@@ -366,7 +366,7 @@
                         android:textColor="#FFFFFF"/>
                 </LinearLayout>
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
 

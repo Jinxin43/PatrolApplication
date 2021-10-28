@@ -1262,7 +1262,7 @@ public static String ListToJSONStr(List<String> StrList)
         {
             Object[] pArgs = null;
 
-            String[] paths = (String[]) SM.getClass().getMethod("getVolumePaths").invoke(SM);
+            String[] paths = (String[]) SM.getClass().getMethod("getVolumePaths", new  Class[ 0 ]).invoke(SM,  new  Object[]{});
             SDCardPathList = Arrays.asList(paths);
         }
         catch (NoSuchMethodException e1) {}

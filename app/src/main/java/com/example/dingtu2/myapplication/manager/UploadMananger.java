@@ -1,9 +1,10 @@
 package com.example.dingtu2.myapplication.manager;
 
 import android.os.Handler;
-import android.support.media.ExifInterface;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.exifinterface.media.ExifInterface;
 
 import com.DingTu.Base.ICallback;
 import com.example.dingtu2.myapplication.AppSetting;

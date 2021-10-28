@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
+    android:background="#f1f1f1"
     android:orientation="vertical">
 
     <LinearLayout
@@ -18,8 +19,7 @@
             android:gravity="center"
             android:textColor="#000000"
             android:textAppearance="?android:attr/textAppearanceMedium"
-
-            android:background="@drawable/v1_bk_table_header"/>
+            android:background="@layout/v1_bk_table_header"/>
     </LinearLayout>
     <TextView
         android:id="@+id/tvLocaleText"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="存储器信息"
         android:textColor="#000000"
-        android:background="@drawable/v1_bk_head_splitbar" />
+        android:background="@layout/v1_bk_head_splitbar" />
     <ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"

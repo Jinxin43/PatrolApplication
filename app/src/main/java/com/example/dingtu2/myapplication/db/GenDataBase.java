@@ -1,9 +1,9 @@
 package com.example.dingtu2.myapplication.db;
 
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import com.example.dingtu2.myapplication.db.dao.RoundDao;
 import com.example.dingtu2.myapplication.db.dao.RoundEventDao;
